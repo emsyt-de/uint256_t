@@ -2,16 +2,10 @@
 #include <vector>
 #include <cstring>
 
-const uint128_t uint128_64(64);
-const uint128_t uint128_128(128);
-const uint128_t uint128_256(256);
 const uint256_t uint256_0(0);
 const uint256_t uint256_1(1);
-const uint256_t uint256_max(uint128_t((uint64_t) -1, (uint64_t) -1), uint128_t((uint64_t) -1, (uint64_t) -1));
+const uint256_t uint256_max(-1);
 
-uint256_t::uint256_t()
-    : UPPER(uint128_0), LOWER(uint128_0)
-{}
 
 uint256_t::uint256_t(const uint256_t & rhs)
     : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
@@ -348,9 +342,9 @@ uint256_t uint256_t::operator*(const uint128_t & rhs) const{
 }
 
 uint256_t uint256_t::operator*(const uint256_t & rhs) const{
-    // split values into 4 64-bit parts
-    uint128_t top[4] = {UPPER.upper(), UPPER.lower(), LOWER.upper(), LOWER.lower()};
-    uint128_t bottom[4] = {rhs.upper().upper(), rhs.upper().lower(), rhs.lower().upper(), rhs.lower().lower()};
+	// split values into 4 64-bit parts
+	uint128_t top[4] = {upper64(UPPER), lower64(UPPER), upper64(LOWER), lower64(LOWER)};
+	uint128_t bottom[4] = {upper64(rhs.upper()), lower64(rhs.upper()), upper64(rhs.lower()), lower64(rhs.lower())};
     uint128_t products[4][4];
 
     // multiply each component of the values
@@ -361,26 +355,26 @@ uint256_t uint256_t::operator*(const uint256_t & rhs) const{
     }
 
     // first row
-    uint128_t fourth64 = uint128_t(products[0][3].lower());
-    uint128_t third64  = uint128_t(products[0][2].lower()) + uint128_t(products[0][3].upper());
-    uint128_t second64 = uint128_t(products[0][1].lower()) + uint128_t(products[0][2].upper());
-    uint128_t first64  = uint128_t(products[0][0].lower()) + uint128_t(products[0][1].upper());
+	uint128_t fourth64 = uint128_t(lower64(products[0][3]));
+	uint128_t third64  = uint128_t(lower64(products[0][2])) + uint128_t(upper64(products[0][3]));
+	uint128_t second64 = uint128_t(lower64(products[0][1])) + uint128_t(upper64(products[0][2]));
+	uint128_t first64  = uint128_t(lower64(products[0][0])) + uint128_t(upper64(products[0][1]));
 
     // second row
-    third64  += uint128_t(products[1][3].lower());
-    second64 += uint128_t(products[1][2].lower()) + uint128_t(products[1][3].upper());
-    first64  += uint128_t(products[1][1].lower()) + uint128_t(products[1][2].upper());
+	third64  += uint128_t(lower64(products[1][3]));
+	second64 += uint128_t(lower64(products[1][2])) + uint128_t(upper64(products[1][3]));
+	first64  += uint128_t(lower64(products[1][1])) + uint128_t(upper64(products[1][2]));
 
     // third row
-    second64 += uint128_t(products[2][3].lower());
-    first64  += uint128_t(products[2][2].lower()) + uint128_t(products[2][3].upper());
+	second64 += uint128_t(lower64(products[2][3]));
+	first64  += uint128_t(lower64(products[2][2])) + uint128_t(upper64(products[2][3]));
 
     // fourth row
-    first64  += uint128_t(products[3][3].lower());
+	first64  += uint128_t(lower64(products[3][3]));
 
     // combines the values, taking care of carry over
     return uint256_t(first64 << uint128_64, uint128_0) +
-           uint256_t(third64.upper(), third64 << uint128_64) +
+		   uint256_t(upper64(third64), third64 << uint128_64) +
            uint256_t(second64, uint128_0) +
            uint256_t(fourth64);
 }
@@ -499,24 +493,24 @@ const uint128_t & uint256_t::lower() const {
     return LOWER;
 }
 
-std::vector<uint8_t> uint256_t::export_bits() const {
-    std::vector<uint8_t> ret;
-    ret.reserve(32);
-    UPPER.export_bits(ret);
-    LOWER.export_bits(ret);
-    return ret;
-}
+//std::vector<uint8_t> uint256_t::export_bits() const {
+//    std::vector<uint8_t> ret;
+//    ret.reserve(32);
+//    UPPER.export_bits(ret);
+//    LOWER.export_bits(ret);
+//    return ret;
+//}
 
-std::vector<uint8_t> uint256_t::export_bits_truncate() const {
-    std::vector<uint8_t> ret = export_bits();
+//std::vector<uint8_t> uint256_t::export_bits_truncate() const {
+//    std::vector<uint8_t> ret = export_bits();
 
-	//prune the zeroes
-	int i = 0;
-	while (ret[i] == 0 && i < 64) i++;
-	ret.erase(ret.begin(), ret.begin() + i);
+//	//prune the zeroes
+//	int i = 0;
+//	while (ret[i] == 0 && i < 64) i++;
+//	ret.erase(ret.begin(), ret.begin() + i);
 
-	return ret;
-}
+//	return ret;
+//}
 
 uint16_t uint256_t::bits() const{
     uint16_t out = 0;

@@ -55,10 +55,10 @@ TEST(Constructor, four){
             for(uint8_t lo_hi = 0; lo_hi < 2; lo_hi++){
                 for(uint8_t lo_lo = 0; lo_lo < 2; lo_lo++){
                     const uint256_t val(hi_hi, hi_lo, lo_hi, lo_lo);
-                    EXPECT_EQ(val.upper().upper(), hi_hi);
-                    EXPECT_EQ(val.upper().lower(), hi_lo);
-                    EXPECT_EQ(val.lower().upper(), lo_hi);
-                    EXPECT_EQ(val.lower().lower(), lo_lo);
+					EXPECT_EQ(uint256_t::upper64(val.upper()), hi_hi);
+					EXPECT_EQ(uint256_t::lower64(val.upper()), hi_lo);
+					EXPECT_EQ(uint256_t::upper64(val.lower()), lo_hi);
+					EXPECT_EQ(uint256_t::lower64(val.lower()), lo_lo);
                 }
             }
         }

@@ -12,10 +12,10 @@ TEST(BitWise, invert){
                                                      lo_hi?0xffffffffffffffffULL:0x0000000000000000ULL,
                                                      lo_lo?0xffffffffffffffffULL:0x0000000000000000ULL);
 
-                    EXPECT_EQ(val.upper().upper(), hi_hi?0x0000000000000000ULL:0xffffffffffffffffULL);
-                    EXPECT_EQ(val.upper().lower(), hi_lo?0x0000000000000000ULL:0xffffffffffffffffULL);
-                    EXPECT_EQ(val.lower().upper(), lo_hi?0x0000000000000000ULL:0xffffffffffffffffULL);
-                    EXPECT_EQ(val.lower().lower(), lo_lo?0x0000000000000000ULL:0xffffffffffffffffULL);
+					EXPECT_EQ(uint256_t::upper64(val.upper()), hi_hi?0x0000000000000000ULL:0xffffffffffffffffULL);
+					EXPECT_EQ(uint256_t::lower64(val.upper()), hi_lo?0x0000000000000000ULL:0xffffffffffffffffULL);
+					EXPECT_EQ(uint256_t::upper64(val.lower()), lo_hi?0x0000000000000000ULL:0xffffffffffffffffULL);
+					EXPECT_EQ(uint256_t::lower64(val.lower()), lo_lo?0x0000000000000000ULL:0xffffffffffffffffULL);
                 }
             }
         }

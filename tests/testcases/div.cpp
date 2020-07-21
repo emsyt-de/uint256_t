@@ -22,7 +22,13 @@ TEST(External, divide){
     uint16_t  u16  = 0xaaaaULL;
     uint32_t  u32  = 0xaaaaaaaaULL;
     uint64_t  u64  = 0xaaaaaaaaaaaaaaaaULL;
-    uint128_t u128  (0xaaaaaaaaaaaaaaaaULL, 0xaaaaaaaaaaaaaaaaULL);
+	uint128_t u128 = 0xaaaaaaaaaaaaaaaaULL;
+	u128 = u128 << 64;
+	u128 |= 0xaaaaaaaaaaaaaaaaULL;
+
+	uint128_t u128_1 = 0x163356b88ac0de0ULL;
+	u128_1 = u128_1 << 64;
+	u128_1 |= 0x163356b88ac0de01ULL;
 
     const uint256_t val(0x7bULL);
 
@@ -40,5 +46,5 @@ TEST(External, divide){
     EXPECT_EQ(u16  /= val, (uint16_t) 0x163ULL);
     EXPECT_EQ(u32  /= val, (uint32_t) 0x163356bULL);
     EXPECT_EQ(u64  /= val, (uint64_t) 0x163356b88ac0de0ULL);
-    EXPECT_EQ(u128 /= val,  uint128_t(0x163356b88ac0de0ULL, 0x163356b88ac0de01ULL));
+	EXPECT_EQ(u128 /= val,  u128_1);
 }

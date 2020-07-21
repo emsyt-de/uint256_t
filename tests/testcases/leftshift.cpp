@@ -32,9 +32,15 @@ TEST(External, shift_left){
     uint16_t  u16  = 0xffffULL;
     uint32_t  u32  = 0xffffffffULL;
     uint64_t  u64  = 0xffffffffffffffffULL;
-    uint128_t u128  (0xffffffffffffffffULL, 0xffffffffffffffffULL);
+	uint128_t u128 = 0xffffffffffffffffULL;
+	u128 = u128 << 64;
+	u128 |= 0xffffffffffffffffULL;
 
-    const uint256_t zero(0);
+	uint128_t u128_1 = 0xffffffffffffffffULL;
+	u128_1 = u128 << 64;
+	u128_1 |= 0xfffffffffffffffeULL;
+
+	const uint256_t zero(0);
     const uint256_t one(1);
 
     EXPECT_EQ(t    << zero, t);
@@ -67,7 +73,7 @@ TEST(External, shift_left){
     EXPECT_EQ(u16  <<= one, (uint16_t) 0xfffeULL);
     EXPECT_EQ(u32  <<= one, (uint32_t) 0xfffffffeULL);
     EXPECT_EQ(u64  <<= one, (uint64_t) 0xfffffffffffffffeULL);
-    EXPECT_EQ(u128 <<= one, uint128_t (0xffffffffffffffffULL, 0xfffffffffffffffeULL));
+	EXPECT_EQ(u128 <<= one, u128_1);
 
     EXPECT_EQ(u8   << uint256_t(7),   uint256_t(0x7f00ULL));
     EXPECT_EQ(u16  << uint256_t(15),  uint256_t(0x7fff0000ULL));

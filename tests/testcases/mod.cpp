@@ -24,7 +24,9 @@ TEST(External, modulo){
     uint16_t  u16  = 0xaaaaULL;
     uint32_t  u32  = 0xaaaaaaaaULL;
     uint64_t  u64  = 0xaaaaaaaaaaaaaaaaULL;
-    uint128_t u128  (0xaaaaaaaaaaaaaaaaULL, 0xaaaaaaaaaaaaaaaaULL);
+	uint128_t u128 = 0xaaaaaaaaaaaaaaaaULL;
+	u128 = u128 << 64;
+	u128 |= 0xaaaaaaaaaaaaaaaaULL;
 
     const uint256_t val(0xd03ULL); // prime
 

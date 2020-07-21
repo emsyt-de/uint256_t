@@ -33,13 +33,13 @@ to do a general rewrite of this class.
 
 #include <cstdint>
 #include <ostream>
+#include <vector>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
 
-#include "uint128_t.h"
-
 class uint256_t;
+typedef __uint128_t uint128_t;
 
 // Give uint256_t type traits
 namespace std {  // This is probably not a good idea
@@ -48,13 +48,21 @@ namespace std {  // This is probably not a good idea
 	template <> struct is_unsigned   <uint256_t> : std::true_type {};
 }
 
+const uint128_t uint128_0(0);
+const uint128_t uint128_1(1);
+const uint128_t uint128_64(64);
+const uint128_t uint128_128(128);
+const uint128_t uint128_256(256);
+
 class uint256_t{
-	private:
-		uint128_t UPPER, LOWER;
+
+private:
+		uint128_t UPPER = 0, LOWER = 0;
 
 	public:
+
 		// Constructors
-		uint256_t();
+		uint256_t() = default;
 		uint256_t(const uint256_t & rhs);
 		uint256_t(uint256_t && rhs);
 		uint256_t(const std::string & s);
@@ -87,12 +95,23 @@ class uint256_t{
 				std::is_integral<T>::value &&
 				std::is_integral<U>::value, void>::type>
 		uint256_t(const R & upper_lhs, const S & lower_lhs, const T & upper_rhs, const U & lower_rhs)
-			: UPPER(upper_lhs, lower_lhs), LOWER(upper_rhs, lower_rhs)
-		{}
+		{
+			UPPER = upper_lhs;
+			UPPER = UPPER << 64;
+			UPPER |= lower_lhs;
 
-		//  RHS input args only
-		std::vector<uint8_t> export_bits() const;
-		std::vector<uint8_t> export_bits_truncate() const;
+			LOWER = upper_rhs;
+			LOWER = LOWER << 64;
+			LOWER |= lower_rhs;
+		}
+
+		static inline uint64_t upper64(uint128_t u128) {
+			return u128>>64;
+		}
+
+		static inline uint64_t lower64(uint128_t u128) {
+			return static_cast<uint64_t>(u128);
+		}
 
 		// Assignment Operator
 		uint256_t & operator=(const uint256_t & rhs);
