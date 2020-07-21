@@ -65,7 +65,6 @@ private:
 		uint256_t() = default;
 		uint256_t(const uint256_t & rhs) = default;
 		uint256_t(uint256_t && rhs) = default;
-		uint256_t(const std::string & s);
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		uint256_t(const T & rhs)
@@ -340,7 +339,7 @@ private:
 
 	private:
 		std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs) const;
-		void init(const char * s);
+		void init(const std::string_view& s);
 
 	public:
 		uint256_t operator/(const uint128_t & rhs) const;

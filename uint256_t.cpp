@@ -7,36 +7,6 @@ const uint256_t uint256_1(1);
 const uint256_t uint256_max(-1);
 
 
-uint256_t::uint256_t(const std::string & s) {
-    init(s.c_str());
-}
-
-uint256_t::uint256_t(const char * s) {
-    init(s);
-}
-
-void uint256_t::init(const char * s) {
-    //create from string
-    char buffer[64];
-    if (s == NULL) { uint256_t(); return; }
-    if (s[1] == 'x')
-        s += 2;
-    else if (*s == 'x')
-        s++;
-
-    int len = strlen(s);
-    int padLength = 0;
-    if (len < 64) {
-        padLength = 64 - len;
-        memset(buffer, '0', padLength);
-    }
-
-    memcpy(buffer + padLength, s, len);
-
-    UPPER = uint128_t(buffer);
-    LOWER = uint128_t(buffer + 32);
-}
-
 uint256_t & uint256_t::operator=(const uint256_t & rhs){
     UPPER = rhs.UPPER;
     LOWER = rhs.LOWER;
