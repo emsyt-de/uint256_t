@@ -199,66 +199,6 @@ bool uint256_t::operator||(const uint256_t & rhs) const{
     return ((bool) *this || (bool) rhs);
 }
 
-bool uint256_t::operator==(const uint128_t & rhs) const{
-    return (*this == uint256_t(rhs));
-}
-
-//bool uint256_t::operator==(const uint256_t & rhs) const{
-//	return ((UPPER == rhs.UPPER) && (LOWER == rhs.LOWER));
-//}
-
-bool uint256_t::operator!=(const uint128_t & rhs) const{
-    return (*this != uint256_t(rhs));
-}
-
-//bool uint256_t::operator!=(const uint256_t & rhs) const{
-//    return ((UPPER != rhs.UPPER) | (LOWER != rhs.LOWER));
-//}
-
-bool uint256_t::operator>(const uint128_t & rhs) const{
-    return (*this > uint256_t(rhs));
-}
-
-//bool uint256_t::operator>(const uint256_t & rhs) const{
-//    if (UPPER == rhs.UPPER){
-//        return (LOWER > rhs.LOWER);
-//    }
-//    if (UPPER > rhs.UPPER){
-//        return true;
-//    }
-//    return false;
-//}
-
-bool uint256_t::operator<(const uint128_t & rhs) const{
-    return (*this < uint256_t(rhs));
-}
-
-//bool uint256_t::operator<(const uint256_t & rhs) const{
-//    if (UPPER == rhs.UPPER){
-//        return (LOWER < rhs.LOWER);
-//    }
-//    if (UPPER < rhs.UPPER){
-//        return true;
-//    }
-//    return false;
-//}
-
-bool uint256_t::operator>=(const uint128_t & rhs) const{
-    return (*this >= uint256_t(rhs));
-}
-
-//bool uint256_t::operator>=(const uint256_t & rhs) const{
-//    return ((*this > rhs) | (*this == rhs));
-//}
-
-bool uint256_t::operator<=(const uint128_t & rhs) const{
-    return (*this <= uint256_t(rhs));
-}
-
-//bool uint256_t::operator<=(const uint256_t & rhs) const{
-//    return ((*this < rhs) | (*this == rhs));
-//}
-
 uint256_t uint256_t::operator+(const uint128_t & rhs) const{
     return *this + uint256_t(rhs);
 }
@@ -557,8 +497,10 @@ uint256_t operator<<(const uint64_t & lhs, const uint256_t & rhs){
     return uint256_t(lhs) << rhs;
 }
 
+#include <iostream>
+
 uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
+	return uint256_t(lhs) << rhs;
 }
 
 uint256_t operator<<(const int8_t & lhs, const uint256_t & rhs){
@@ -625,31 +567,6 @@ uint256_t operator>>(const int64_t & lhs, const uint256_t & rhs){
 uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
     lhs = (uint256_t(lhs) >> rhs).lower();
     return lhs;
-}
-
-// Comparison Operators
-bool operator==(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs == lhs;
-}
-
-bool operator!=(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs != lhs;
-}
-
-bool operator>(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs < lhs;
-}
-
-bool operator<(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs > lhs;
-}
-
-bool operator>=(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs <= lhs;
-}
-
-bool operator<=(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs >= lhs;
 }
 
 // Arithmetic Operators

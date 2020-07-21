@@ -231,54 +231,29 @@ private:
 		}
 
 		// Comparison Operators
-		bool operator==(const uint128_t & rhs) const;
-		//bool operator==(const uint256_t & rhs) const;
-		constexpr bool operator<=>(const uint256_t & rhs) const = default;
-
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator==(const T & rhs) const{
-			return (!UPPER && (LOWER == uint128_t(rhs)));
+		friend bool operator==(const T & lhs, const uint256_t & rhs)
+		{
+			return (!rhs.upper() && (static_cast<uint64_t>(lhs) == rhs.lower()));
 		}
 
-		bool operator!=(const uint128_t & rhs) const;
-		//bool operator!=(const uint256_t & rhs) const;
-
-		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator!=(const T & rhs) const{
-			return ((bool) UPPER | (LOWER != uint128_t(rhs)));
+		friend bool operator==(const uint128_t & lhs, const uint256_t & rhs)
+		{
+			return !rhs.upper() && (lhs == rhs.lower());
 		}
 
-		bool operator>(const uint128_t & rhs) const;
-		//bool operator>(const uint256_t & rhs) const;
+		friend bool operator==(const uint256_t & lhs, const uint256_t & rhs) = default;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator>(const T & rhs) const{
-			return ((bool) UPPER | (LOWER > uint128_t(rhs)));
+		friend std::strong_ordering operator<=>(const T & lhs, const uint256_t & rhs) {
+			return uint256_t(lhs) <=> rhs;
 		}
 
-		bool operator<(const uint128_t & rhs) const;
-		//bool operator<(const uint256_t & rhs) const;
-
-		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator<(const T & rhs) const{
-			return (!UPPER)?(LOWER < uint128_t(rhs)):false;
+		friend std::strong_ordering operator<=>(const uint128_t & lhs, const uint256_t & rhs) {
+			return uint256_t(lhs) <=> rhs;
 		}
 
-		bool operator>=(const uint128_t & rhs) const;
-		//bool operator>=(const uint256_t & rhs) const;
-
-		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator>=(const T & rhs) const{
-			return ((*this > rhs) | (*this == rhs));
-		}
-
-		bool operator<=(const uint128_t & rhs) const;
-		//bool operator<=(const uint256_t & rhs) const;
-
-		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		bool operator<=(const T & rhs) const{
-			return ((*this < rhs) | (*this == rhs));
-		}
+		friend constexpr std::strong_ordering operator<=>(const uint256_t & lhs, const uint256_t & rhs) = default;
 
 		// Arithmetic Operators
 		uint256_t operator+(const uint128_t & rhs) const;
@@ -478,49 +453,6 @@ uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs);
 template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 T & operator>>=(T & lhs, const uint256_t & rhs){
 	return lhs = static_cast <T> (uint256_t(lhs) >> rhs);
-}
-
-// Comparison Operators
-bool operator==(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator==(const T & lhs, const uint256_t & rhs){
-	return (!rhs.upper() && ((uint64_t) lhs == rhs.lower()));
-}
-
-bool operator!=(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator!=(const T & lhs, const uint256_t & rhs){
-	return (rhs.upper() | ((uint64_t) lhs != rhs.lower()));
-}
-
-bool operator>(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator>(const T & lhs, const uint256_t & rhs){
-	return rhs.upper()?false:((uint128_t) lhs > rhs.lower());
-}
-
-bool operator<(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator<(const T & lhs, const uint256_t & rhs){
-	return rhs.upper()?true:((uint128_t) lhs < rhs.lower());
-}
-
-bool operator>=(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator>=(const T & lhs, const uint256_t & rhs){
-	return rhs.upper()?false:((uint128_t) lhs >= rhs.lower());
-}
-
-bool operator<=(const uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-bool operator<=(const T & lhs, const uint256_t & rhs){
-	return rhs.upper()?true:((uint128_t) lhs <= rhs.lower());
 }
 
 // Arithmetic Operators
