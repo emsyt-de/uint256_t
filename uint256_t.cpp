@@ -7,19 +7,6 @@ const uint256_t uint256_1(1);
 const uint256_t uint256_max(-1);
 
 
-uint256_t::uint256_t(const uint256_t & rhs)
-    : UPPER(rhs.UPPER), LOWER(rhs.LOWER)
-{}
-
-uint256_t::uint256_t(uint256_t && rhs)
-    : UPPER(std::move(rhs.UPPER)), LOWER(std::move(rhs.LOWER))
-{
-    if (this != &rhs){
-        rhs.UPPER = uint128_0;
-        rhs.LOWER = uint128_0;
-    }
-}
-
 uint256_t::uint256_t(const std::string & s) {
     init(s.c_str());
 }

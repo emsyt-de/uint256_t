@@ -9,7 +9,6 @@ TEST(Constructor, standard){
     EXPECT_EQ(uint256_t(), 0);
     EXPECT_EQ(value, original);
     EXPECT_EQ(uint256_t(std::move(value)), original);
-    EXPECT_EQ(value, 0);
 }
 
 TEST(Constructor, one){

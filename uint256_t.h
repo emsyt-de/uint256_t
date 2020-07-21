@@ -63,10 +63,9 @@ private:
 
 		// Constructors
 		uint256_t() = default;
-		uint256_t(const uint256_t & rhs);
-		uint256_t(uint256_t && rhs);
+		uint256_t(const uint256_t & rhs) = default;
+		uint256_t(uint256_t && rhs) = default;
 		uint256_t(const std::string & s);
-		uint256_t(const char *val);
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		uint256_t(const T & rhs)
