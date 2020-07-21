@@ -66,15 +66,6 @@ private:
 		uint256_t(const uint256_t & rhs) = default;
 		uint256_t(uint256_t && rhs) = default;
 
-		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-		uint256_t(const T & rhs)
-			: UPPER(uint128_0), LOWER(rhs)
-		{
-			if (rhs < 0) {
-				UPPER = -1;
-			}
-		}
-
 		template <typename S, typename T, typename = typename std::enable_if <std::is_integral<S>::value && std::is_integral<T>::value, void>::type>
 		uint256_t(const S & upper_rhs, const T & lower_rhs)
 			: UPPER(upper_rhs), LOWER(lower_rhs)
