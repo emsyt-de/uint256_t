@@ -3,8 +3,12 @@
 #include "uint256_t.h"
 
 TEST(Comparison, equals){
-    EXPECT_EQ( (uint256_t(0xdeadbeefULL) == uint256_t(0xdeadbeefULL)), true);
-    EXPECT_EQ(!(uint256_t(0xdeadbeefULL) == uint256_t(0xfee1baadULL)), true);
+	EXPECT_EQ( (uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL) == uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL)), true);
+	EXPECT_EQ(!(uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL) == uint256_t(0x5eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL)), true);
+	EXPECT_EQ(!(uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL) == uint256_t(0x4eadbeefdeadbeefULL,0x4eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL)), true);
+	EXPECT_EQ(!(uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL) == uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL)), true);
+	EXPECT_EQ(!(uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x1eadbeefdeadbeefULL) == uint256_t(0x4eadbeefdeadbeefULL,0x3eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL,0x2eadbeefdeadbeefULL)), true);
+	EXPECT_EQ(!(uint256_t(0xdeadbeefULL) == uint256_t(0xfee1baadULL)), true);
 }
 
 TEST(External, equals){

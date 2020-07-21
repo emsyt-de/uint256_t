@@ -232,7 +232,8 @@ private:
 
 		// Comparison Operators
 		bool operator==(const uint128_t & rhs) const;
-		bool operator==(const uint256_t & rhs) const;
+		//bool operator==(const uint256_t & rhs) const;
+		constexpr bool operator<=>(const uint256_t & rhs) const = default;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator==(const T & rhs) const{
@@ -240,7 +241,7 @@ private:
 		}
 
 		bool operator!=(const uint128_t & rhs) const;
-		bool operator!=(const uint256_t & rhs) const;
+		//bool operator!=(const uint256_t & rhs) const;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator!=(const T & rhs) const{
@@ -248,7 +249,7 @@ private:
 		}
 
 		bool operator>(const uint128_t & rhs) const;
-		bool operator>(const uint256_t & rhs) const;
+		//bool operator>(const uint256_t & rhs) const;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator>(const T & rhs) const{
@@ -256,7 +257,7 @@ private:
 		}
 
 		bool operator<(const uint128_t & rhs) const;
-		bool operator<(const uint256_t & rhs) const;
+		//bool operator<(const uint256_t & rhs) const;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator<(const T & rhs) const{
@@ -264,7 +265,7 @@ private:
 		}
 
 		bool operator>=(const uint128_t & rhs) const;
-		bool operator>=(const uint256_t & rhs) const;
+		//bool operator>=(const uint256_t & rhs) const;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator>=(const T & rhs) const{
@@ -272,7 +273,7 @@ private:
 		}
 
 		bool operator<=(const uint128_t & rhs) const;
-		bool operator<=(const uint256_t & rhs) const;
+		//bool operator<=(const uint256_t & rhs) const;
 
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		bool operator<=(const T & rhs) const{
