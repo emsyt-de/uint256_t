@@ -199,93 +199,7 @@ bool uint256_t::operator||(const uint256_t & rhs) const{
     return ((bool) *this || (bool) rhs);
 }
 
-uint256_t uint256_t::operator+(const uint128_t & rhs) const{
-    return *this + uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator+(const uint256_t & rhs) const{
-    return uint256_t(UPPER + rhs.UPPER + (((LOWER + rhs.LOWER) < LOWER)?uint128_1:uint128_0), LOWER + rhs.LOWER);
-}
-
-uint256_t & uint256_t::operator+=(const uint128_t & rhs){
-    return *this += uint256_t(rhs);
-}
-
-uint256_t & uint256_t::operator+=(const uint256_t & rhs){
-    UPPER = rhs.UPPER + UPPER + ((LOWER + rhs.LOWER) < LOWER);
-    LOWER = LOWER + rhs.LOWER;
-    return *this;
-}
-
-uint256_t uint256_t::operator-(const uint128_t & rhs) const{
-    return *this - uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator-(const uint256_t & rhs) const{
-    return uint256_t(UPPER - rhs.UPPER - ((LOWER - rhs.LOWER) > LOWER), LOWER - rhs.LOWER);
-}
-
-uint256_t & uint256_t::operator-=(const uint128_t & rhs){
-    return *this -= uint256_t(rhs);
-}
-
-uint256_t & uint256_t::operator-=(const uint256_t & rhs){
-    *this = *this - rhs;
-    return *this;
-}
-
-uint256_t uint256_t::operator*(const uint128_t & rhs) const{
-    return *this * uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator*(const uint256_t & rhs) const{
-	// split values into 4 64-bit parts
-	uint128_t top[4] = {upper64(UPPER), lower64(UPPER), upper64(LOWER), lower64(LOWER)};
-	uint128_t bottom[4] = {upper64(rhs.upper128()), lower64(rhs.upper128()), upper64(rhs.lower128()), lower64(rhs.lower128())};
-    uint128_t products[4][4];
-
-    // multiply each component of the values
-    for(int y = 3; y > -1; y--){
-        for(int x = 3; x > -1; x--){
-            products[3 - y][x] = top[x] * bottom[y];
-        }
-    }
-
-    // first row
-	uint128_t fourth64 = uint128_t(lower64(products[0][3]));
-	uint128_t third64  = uint128_t(lower64(products[0][2])) + uint128_t(upper64(products[0][3]));
-	uint128_t second64 = uint128_t(lower64(products[0][1])) + uint128_t(upper64(products[0][2]));
-	uint128_t first64  = uint128_t(lower64(products[0][0])) + uint128_t(upper64(products[0][1]));
-
-    // second row
-	third64  += uint128_t(lower64(products[1][3]));
-	second64 += uint128_t(lower64(products[1][2])) + uint128_t(upper64(products[1][3]));
-	first64  += uint128_t(lower64(products[1][1])) + uint128_t(upper64(products[1][2]));
-
-    // third row
-	second64 += uint128_t(lower64(products[2][3]));
-	first64  += uint128_t(lower64(products[2][2])) + uint128_t(upper64(products[2][3]));
-
-    // fourth row
-	first64  += uint128_t(lower64(products[3][3]));
-
-    // combines the values, taking care of carry over
-    return uint256_t(first64 << uint128_64, uint128_0) +
-		   uint256_t(upper64(third64), third64 << uint128_64) +
-           uint256_t(second64, uint128_0) +
-           uint256_t(fourth64);
-}
-
-uint256_t & uint256_t::operator*=(const uint128_t & rhs){
-    return *this *= uint256_t(rhs);
-}
-
-uint256_t & uint256_t::operator*=(const uint256_t & rhs){
-    *this = *this * rhs;
-    return *this;
-}
-
-std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) const{
+std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
     // Save some calculations /////////////////////
     if (rhs == uint256_0){
         throw std::domain_error("Error: division or modulus by 0");
@@ -316,40 +230,6 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
         adder >>= uint256_1;
     }
     return qr;
-}
-
-uint256_t uint256_t::operator/(const uint128_t & rhs) const{
-    return *this / uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator/(const uint256_t & rhs) const{
-    return divmod(*this, rhs).first;
-}
-
-uint256_t & uint256_t::operator/=(const uint128_t & rhs){
-    return *this /= uint256_t(rhs);
-}
-
-uint256_t & uint256_t::operator/=(const uint256_t & rhs){
-    *this = *this / rhs;
-    return *this;
-}
-
-uint256_t uint256_t::operator%(const uint128_t & rhs) const{
-    return *this % uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator%(const uint256_t & rhs) const{
-    return *this - (rhs * (*this / rhs));
-}
-
-uint256_t & uint256_t::operator%=(const uint128_t & rhs){
-    return *this %= uint256_t(rhs);
-}
-
-uint256_t & uint256_t::operator%=(const uint256_t & rhs){
-    *this = *this % rhs;
-    return *this;
 }
 
 uint256_t & uint256_t::operator++(){
@@ -569,52 +449,7 @@ uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
     return lhs;
 }
 
-// Arithmetic Operators
-uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs + lhs;
-}
-
-uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (rhs + lhs).lower128();
-    return lhs;
-}
-
-uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs){
-    return -(rhs - lhs);
-}
-
-uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (-(rhs - lhs)).lower128();
-    return lhs;
-}
-
-uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs){
-    return rhs * lhs;
-}
-
-uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (rhs * lhs).lower128();
-    return lhs;
-}
-
-uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) / rhs;
-}
-
-uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (uint256_t(lhs) / rhs).lower128();
-    return lhs;
-}
-
-uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) % rhs;
-}
-
-uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (uint256_t(lhs) % rhs).lower128();
-    return lhs;
-}
-
+// stream operators
 std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs){
     if (stream.flags() & stream.oct){
         stream << rhs.str(8);
