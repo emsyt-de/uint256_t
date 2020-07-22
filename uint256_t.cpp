@@ -241,7 +241,7 @@ uint256_t uint256_t::operator*(const uint128_t & rhs) const{
 uint256_t uint256_t::operator*(const uint256_t & rhs) const{
 	// split values into 4 64-bit parts
 	uint128_t top[4] = {upper64(UPPER), lower64(UPPER), upper64(LOWER), lower64(LOWER)};
-	uint128_t bottom[4] = {upper64(rhs.upper()), lower64(rhs.upper()), upper64(rhs.lower()), lower64(rhs.lower())};
+	uint128_t bottom[4] = {upper64(rhs.upper128()), lower64(rhs.upper128()), upper64(rhs.lower128()), lower64(rhs.lower128())};
     uint128_t products[4][4];
 
     // multiply each component of the values
@@ -382,11 +382,11 @@ uint256_t uint256_t::operator-() const{
     return ~*this + uint256_1;
 }
 
-const uint128_t & uint256_t::upper() const {
+const uint128_t & uint256_t::upper128() const {
     return UPPER;
 }
 
-const uint128_t & uint256_t::lower() const {
+const uint128_t & uint256_t::lower128() const {
     return LOWER;
 }
 
@@ -455,7 +455,7 @@ uint256_t operator&(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator&=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (rhs & lhs).lower();
+	lhs = (rhs & lhs).lower128();
     return lhs;
 }
 
@@ -464,7 +464,7 @@ uint256_t operator|(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator|=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (rhs | lhs).lower();
+	lhs = (rhs | lhs).lower128();
     return lhs;
 }
 
@@ -473,7 +473,7 @@ uint256_t operator^(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator^=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (rhs ^ lhs).lower();
+	lhs = (rhs ^ lhs).lower128();
     return lhs;
 }
 
@@ -520,7 +520,7 @@ uint256_t operator<<(const int64_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (uint256_t(lhs) << rhs).lower();
+	lhs = (uint256_t(lhs) << rhs).lower128();
     return lhs;
 }
 
@@ -565,7 +565,7 @@ uint256_t operator>>(const int64_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (uint256_t(lhs) >> rhs).lower();
+	lhs = (uint256_t(lhs) >> rhs).lower128();
     return lhs;
 }
 
@@ -575,7 +575,7 @@ uint256_t operator+(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator+=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (rhs + lhs).lower();
+	lhs = (rhs + lhs).lower128();
     return lhs;
 }
 
@@ -584,7 +584,7 @@ uint256_t operator-(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator-=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (-(rhs - lhs)).lower();
+	lhs = (-(rhs - lhs)).lower128();
     return lhs;
 }
 
@@ -593,7 +593,7 @@ uint256_t operator*(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator*=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (rhs * lhs).lower();
+	lhs = (rhs * lhs).lower128();
     return lhs;
 }
 
@@ -602,7 +602,7 @@ uint256_t operator/(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator/=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (uint256_t(lhs) / rhs).lower();
+	lhs = (uint256_t(lhs) / rhs).lower128();
     return lhs;
 }
 
@@ -611,7 +611,7 @@ uint256_t operator%(const uint128_t & lhs, const uint256_t & rhs){
 }
 
 uint128_t & operator%=(uint128_t & lhs, const uint256_t & rhs){
-    lhs = (uint256_t(lhs) % rhs).lower();
+	lhs = (uint256_t(lhs) % rhs).lower128();
     return lhs;
 }
 

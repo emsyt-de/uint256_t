@@ -234,12 +234,12 @@ private:
 		template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
 		friend bool operator==(const T & lhs, const uint256_t & rhs)
 		{
-			return (!rhs.upper() && (static_cast<uint64_t>(lhs) == rhs.lower()));
+			return (!rhs.upper128() && (static_cast<uint64_t>(lhs) == rhs.lower128()));
 		}
 
 		friend bool operator==(const uint128_t & lhs, const uint256_t & rhs)
 		{
-			return !rhs.upper() && (lhs == rhs.lower());
+			return !rhs.upper128() && (lhs == rhs.lower128());
 		}
 
 		friend bool operator==(const uint256_t & lhs, const uint256_t & rhs) = default;
@@ -356,8 +356,8 @@ private:
 		uint256_t operator-() const;
 
 		// Get private values
-		const uint128_t & upper() const;
-		const uint128_t & lower() const;
+		const uint128_t & upper128() const;
+		const uint128_t & lower128() const;
 
 		// Get bitsize of value
 		uint16_t bits() const;
