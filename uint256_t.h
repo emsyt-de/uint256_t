@@ -115,12 +115,35 @@ public:
 	}
 
 	// Typecast Operators
-	operator bool      () const;
-	operator uint8_t   () const;
-	operator uint16_t  () const;
-	operator uint32_t  () const;
-	operator uint64_t  () const;
-	operator uint128_t () const;
+	constexpr operator bool() const
+	{
+		return static_cast<bool>(LOWER);
+	}
+
+	constexpr operator uint8_t() const
+	{
+		return static_cast<uint8_t>(LOWER);
+	}
+
+	constexpr operator uint16_t() const
+	{
+		return static_cast<uint16_t>(LOWER);
+	}
+
+	constexpr operator uint32_t() const
+	{
+		return static_cast<uint32_t>(LOWER);
+	}
+
+	constexpr operator uint64_t() const
+	{
+		return static_cast<uint64_t>(LOWER);
+	}
+
+	constexpr operator uint128_t() const
+	{
+		return LOWER;
+	}
 
 	// Bitwise Operators
 	template <std::integral T1, std::integral T2>
@@ -285,7 +308,10 @@ public:
 	}
 
 	// Logical Operators
-	bool operator!() const;
+	friend inline constexpr bool operator!(const uint256_t & hs)
+	{
+		return ! static_cast<bool>(hs);
+	}
 
 	bool operator&&(const uint128_t & rhs) const;
 	bool operator&&(const uint256_t & rhs) const;

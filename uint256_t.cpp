@@ -22,35 +22,6 @@ uint256_t & uint256_t::operator=(uint256_t && rhs){
     return *this;
 }
 
-uint256_t::operator bool() const{
-    return (bool) (UPPER | LOWER);
-}
-
-uint256_t::operator uint8_t() const{
-    return (uint8_t) LOWER;
-}
-
-uint256_t::operator uint16_t() const{
-    return (uint16_t) LOWER;
-}
-
-uint256_t::operator uint32_t() const{
-    return (uint32_t) LOWER;
-}
-
-uint256_t::operator uint64_t() const{
-    return (uint64_t) LOWER;
-}
-
-uint256_t::operator uint128_t() const{
-    return LOWER;
-}
-
-
-bool uint256_t::operator!() const{
-    return ! (bool) *this;
-}
-
 bool uint256_t::operator&&(const uint128_t & rhs) const{
     return (*this && uint256_t(rhs));
 }
