@@ -49,15 +49,15 @@ template <> struct is_integral   <uint256_t> : std::true_type {};
 template <> struct is_unsigned   <uint256_t> : std::true_type {};
 }
 
-const uint128_t uint128_0(0);
-const uint128_t uint128_1(1);
-const uint128_t uint128_64(64);
-const uint128_t uint128_128(128);
-const uint128_t uint128_256(256);
-
 class uint256_t{
 
 private:
+	static constexpr uint128_t uint128_0 = 0;
+	static constexpr uint128_t uint128_1 = 1;
+	static constexpr uint128_t uint128_64 = 64;
+	static constexpr uint128_t uint128_128 = 128;
+	static constexpr uint128_t uint128_256 = 256;
+
 	uint128_t UPPER = 0, LOWER = 0;
 
 public:
@@ -75,7 +75,7 @@ public:
 	uint256_t(const uint128_t & upper_rhs, const uint128_t & lower_rhs)
 		: UPPER(upper_rhs), LOWER(lower_rhs)
 	{}
-	uint256_t(const uint128_t & lower_rhs)
+	constexpr uint256_t(const uint128_t & lower_rhs)
 		: UPPER(uint128_0), LOWER(lower_rhs)
 	{}
 
@@ -210,38 +210,78 @@ public:
 	}
 
 	// Bit Shift Operators
-	uint256_t operator<<(const uint128_t & shift) const;
-	uint256_t operator<<(const uint256_t & shift) const;
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	uint256_t operator<<(const T & rhs) const{
-		return *this << uint256_t(rhs);
+	template <std::integral T1, std::integral T2>
+	friend inline constexpr uint256_t operator<<(const T1 & lhs, const T2 & rhs)
+	{
+		if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
+		{
+				const uint128_t shift = rhs.LOWER;
+				if (rhs.UPPER || (shift >= uint128_256)){
+					return 0;
+				}
+				else if (shift == uint128_128){
+					return uint256_t(lhs.LOWER, uint128_0);
+				}
+				else if (shift == uint128_0){
+					return lhs;
+				}
+				else if (shift < uint128_128){
+					return uint256_t((lhs.UPPER << shift) + (lhs.LOWER >> (uint128_128 - shift)), lhs.LOWER << shift);
+				}
+				else if ((uint128_256 > shift) && (shift > uint128_128)){
+					return uint256_t(lhs.LOWER << (shift - uint128_128), uint128_0);
+				}
+				else{
+					return 0;
+				}
+		}
+		else
+		{
+			return uint256_t(lhs) << uint256_t(rhs);
+		}
 	}
 
-	uint256_t & operator<<=(const uint128_t & shift);
-	uint256_t & operator<<=(const uint256_t & shift);
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	uint256_t & operator<<=(const T & rhs){
-		*this = *this << uint256_t(rhs);
-		return *this;
+	template <std::integral T1, std::integral T2>
+	friend inline constexpr T1 operator<<=(T1 & lhs, const T2 & rhs)
+	{
+		return lhs = (lhs << rhs);
 	}
 
-	uint256_t operator>>(const uint128_t & shift) const;
-	uint256_t operator>>(const uint256_t & shift) const;
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	uint256_t operator>>(const T & rhs) const{
-		return *this >> uint256_t(rhs);
+	template <std::integral T1, std::integral T2>
+	friend inline constexpr uint256_t operator>>(const T1 & lhs, const T2 & rhs)
+	{
+		if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
+		{
+			const uint128_t shift = rhs.LOWER;
+			if (rhs.UPPER || (shift >= uint128_256)){
+				return 0;
+			}
+			else if (shift == uint128_128){
+				return lhs.UPPER;
+			}
+			else if (shift == uint128_0){
+				return lhs;
+			}
+			else if (shift < uint128_128){
+				return uint256_t(lhs.UPPER >> shift, (lhs.UPPER << (uint128_128 - shift)) + (lhs.LOWER >> shift));
+			}
+			else if ((uint128_256 > shift) && (shift > uint128_128)){
+				return uint256_t(lhs.UPPER >> (shift - uint128_128));
+			}
+			else{
+				return 0;
+			}
+		}
+		else
+		{
+			return uint256_t(lhs) >> uint256_t(rhs);
+		}
 	}
 
-	uint256_t & operator>>=(const uint128_t & shift);
-	uint256_t & operator>>=(const uint256_t & shift);
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	uint256_t & operator>>=(const T & rhs){
-		*this = *this >> uint256_t(rhs);
-		return *this;
+	template <std::integral T1, std::integral T2>
+	friend inline constexpr T1 operator>>=(T1 & lhs, const T2 & rhs)
+	{
+		return lhs = (lhs >> rhs);
 	}
 
 	// Logical Operators
@@ -464,52 +504,6 @@ public:
 	// Get string representation of value
 	std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
 };
-
-// useful values
-extern const uint128_t uint128_64;
-extern const uint128_t uint128_128;
-extern const uint128_t uint128_256;
-extern const uint256_t uint256_0;
-extern const uint256_t uint256_1;
-extern const uint256_t uint256_max;
-
-// Bitshift operators
-uint256_t operator<<(const bool      & lhs, const uint256_t & rhs);
-uint256_t operator<<(const uint8_t   & lhs, const uint256_t & rhs);
-uint256_t operator<<(const uint16_t  & lhs, const uint256_t & rhs);
-uint256_t operator<<(const uint32_t  & lhs, const uint256_t & rhs);
-uint256_t operator<<(const uint64_t  & lhs, const uint256_t & rhs);
-uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs);
-uint256_t operator<<(const int8_t    & lhs, const uint256_t & rhs);
-uint256_t operator<<(const int16_t   & lhs, const uint256_t & rhs);
-uint256_t operator<<(const int32_t   & lhs, const uint256_t & rhs);
-uint256_t operator<<(const int64_t   & lhs, const uint256_t & rhs);
-
-uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-T & operator<<=(T & lhs, const uint256_t & rhs){
-	lhs = static_cast <T> (uint256_t(lhs) << rhs);
-	return lhs;
-}
-
-uint256_t operator>>(const bool      & lhs, const uint256_t & rhs);
-uint256_t operator>>(const uint8_t   & lhs, const uint256_t & rhs);
-uint256_t operator>>(const uint16_t  & lhs, const uint256_t & rhs);
-uint256_t operator>>(const uint32_t  & lhs, const uint256_t & rhs);
-uint256_t operator>>(const uint64_t  & lhs, const uint256_t & rhs);
-uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs);
-uint256_t operator>>(const int8_t    & lhs, const uint256_t & rhs);
-uint256_t operator>>(const int16_t   & lhs, const uint256_t & rhs);
-uint256_t operator>>(const int32_t   & lhs, const uint256_t & rhs);
-uint256_t operator>>(const int64_t   & lhs, const uint256_t & rhs);
-
-uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs);
-
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-T & operator>>=(T & lhs, const uint256_t & rhs){
-	return lhs = static_cast <T> (uint256_t(lhs) >> rhs);
-}
 
 // IO Operator
 std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs);

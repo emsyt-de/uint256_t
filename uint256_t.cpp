@@ -2,10 +2,9 @@
 #include <vector>
 #include <cstring>
 
-const uint256_t uint256_0(0);
-const uint256_t uint256_1(1);
-const uint256_t uint256_max(-1);
-
+const uint256_t uint256_0 = 0;
+const uint256_t uint256_1 = 1;
+const uint256_t uint256_max = -1;
 
 uint256_t & uint256_t::operator=(const uint256_t & rhs){
     UPPER = rhs.UPPER;
@@ -47,76 +46,6 @@ uint256_t::operator uint128_t() const{
     return LOWER;
 }
 
-
-uint256_t uint256_t::operator<<(const uint128_t & rhs) const{
-    return *this << uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator<<(const uint256_t & rhs) const{
-    const uint128_t shift = rhs.LOWER;
-    if (((bool) rhs.UPPER) || (shift >= uint128_256)){
-        return uint256_0;
-    }
-    else if (shift == uint128_128){
-        return uint256_t(LOWER, uint128_0);
-    }
-    else if (shift == uint128_0){
-        return *this;
-    }
-    else if (shift < uint128_128){
-        return uint256_t((UPPER << shift) + (LOWER >> (uint128_128 - shift)), LOWER << shift);
-    }
-    else if ((uint128_256 > shift) && (shift > uint128_128)){
-        return uint256_t(LOWER << (shift - uint128_128), uint128_0);
-    }
-    else{
-        return uint256_0;
-    }
-}
-
-uint256_t & uint256_t::operator<<=(const uint128_t & shift){
-    return *this <<= uint256_t(shift);
-}
-
-uint256_t & uint256_t::operator<<=(const uint256_t & shift){
-    *this = *this << shift;
-    return *this;
-}
-
-uint256_t uint256_t::operator>>(const uint128_t & rhs) const{
-    return *this >> uint256_t(rhs);
-}
-
-uint256_t uint256_t::operator>>(const uint256_t & rhs) const{
-    const uint128_t shift = rhs.LOWER;
-    if (((bool) rhs.UPPER) | (shift >= uint128_256)){
-        return uint256_0;
-    }
-    else if (shift == uint128_128){
-        return uint256_t(UPPER);
-    }
-    else if (shift == uint128_0){
-        return *this;
-    }
-    else if (shift < uint128_128){
-        return uint256_t(UPPER >> shift, (UPPER << (uint128_128 - shift)) + (LOWER >> shift));
-    }
-    else if ((uint128_256 > shift) && (shift > uint128_128)){
-        return uint256_t(UPPER >> (shift - uint128_128));
-    }
-    else{
-        return uint256_0;
-    }
-}
-
-uint256_t & uint256_t::operator>>=(const uint128_t & shift){
-    return *this >>= uint256_t(shift);
-}
-
-uint256_t & uint256_t::operator>>=(const uint256_t & shift){
-    *this = *this >> shift;
-    return *this;
-}
 
 bool uint256_t::operator!() const{
     return ! (bool) *this;
@@ -267,98 +196,6 @@ std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
         out = std::string(len - out.size(), '0') + out;
     }
     return out;
-}
-
-uint256_t operator<<(const bool & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const uint8_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const uint16_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const uint32_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const uint64_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-#include <iostream>
-
-uint256_t operator<<(const uint128_t & lhs, const uint256_t & rhs){
-	return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const int8_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const int16_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const int32_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint256_t operator<<(const int64_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) << rhs;
-}
-
-uint128_t & operator<<=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (uint256_t(lhs) << rhs).lower128();
-    return lhs;
-}
-
-uint256_t operator>>(const bool & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const uint8_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const uint16_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const uint32_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const uint64_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const uint128_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const int8_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const int16_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const int32_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint256_t operator>>(const int64_t & lhs, const uint256_t & rhs){
-    return uint256_t(lhs) >> rhs;
-}
-
-uint128_t & operator>>=(uint128_t & lhs, const uint256_t & rhs){
-	lhs = (uint256_t(lhs) >> rhs).lower128();
-    return lhs;
 }
 
 // stream operators
