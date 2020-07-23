@@ -3,8 +3,11 @@
 #include "uint256_t.h"
 
 TEST(Comparison, not_equals){
-    EXPECT_EQ(!(uint256_t(0xdeadbeefULL) != uint256_t(0xdeadbeefULL)), true);
-    EXPECT_EQ( (uint256_t(0xdeadbeefULL) != uint256_t(0xfee1baadULL)), true);
+	EXPECT_EQ( (uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL) != uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL)), false);
+	EXPECT_EQ( (uint256_t(0xfeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL) != uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL)), true);
+	EXPECT_EQ( (uint256_t(0xdeadbeefULL,0xfeadbeefULL,0xdeadbeefULL,0xdeadbeefULL) != uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL)), true);
+	EXPECT_EQ( (uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xfeadbeefULL,0xdeadbeefULL) != uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL)), true);
+	EXPECT_EQ( (uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xfeadbeefULL) != uint256_t(0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL,0xdeadbeefULL)), true);
 }
 
 TEST(External, not_equals){

@@ -3,8 +3,8 @@
 #include "uint256_t.h"
 
 TEST(Comparison, greater_than_or_equals){
-    const uint256_t big  (0xffffffffffffffffULL, 0xffffffffffffffffULL);
-    const uint256_t small(0x0000000000000000ULL, 0x0000000000000000ULL);
+	const uint256_t big  (0xffffffffffffffffULL, 0x0000000000000000ULL);
+	const uint256_t small(0x0000000000000000ULL, 0xffffffffffffffffULL);
 
     EXPECT_EQ(small >= small,  true);
     EXPECT_EQ(small >= big,   false);
