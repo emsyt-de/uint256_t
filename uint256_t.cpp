@@ -6,22 +6,6 @@ const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
 const uint256_t uint256_max = -1;
 
-uint256_t & uint256_t::operator=(const uint256_t & rhs){
-    UPPER = rhs.UPPER;
-    LOWER = rhs.LOWER;
-    return *this;
-}
-
-uint256_t & uint256_t::operator=(uint256_t && rhs){
-    if (this != &rhs){
-        UPPER = std::move(rhs.UPPER);
-        LOWER = std::move(rhs.LOWER);
-        rhs.UPPER = uint128_0;
-        rhs.LOWER = uint128_0;
-    }
-    return *this;
-}
-
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
     // Save some calculations /////////////////////
     if (rhs == uint256_0){

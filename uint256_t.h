@@ -104,15 +104,8 @@ public:
 	}
 
 	// Assignment Operator
-	uint256_t & operator=(const uint256_t & rhs);
-	uint256_t & operator=(uint256_t && rhs);
-
-	template <typename T, typename = typename std::enable_if <std::is_integral<T>::value, T>::type>
-	uint256_t & operator=(const T & rhs){
-		UPPER = uint128_0;
-		LOWER = rhs;
-		return *this;
-	}
+	uint256_t & operator=(const uint256_t & rhs) = default;
+	uint256_t & operator=(uint256_t && rhs) = default;
 
 	// Typecast Operators
 	constexpr operator bool() const
