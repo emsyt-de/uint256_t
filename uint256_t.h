@@ -232,29 +232,50 @@ public:
 	}
 
 	// Comparison Operators
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	friend bool operator==(const T & lhs, const uint256_t & rhs)
+	template <std::integral T1, std::integral T2>
+	friend inline bool operator==(const T1 & lhs, const T2 & rhs)
 	{
-		return (!rhs.upper128() && (static_cast<uint64_t>(lhs) == rhs.lower128()));
+		if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
+		{
+			return lhs.UPPER == rhs.UPPER && lhs.LOWER == rhs.LOWER;
+		}
+		else if constexpr (std::is_same_v<T1,uint256_t>)
+		{
+			return !lhs.UPPER && lhs.LOWER == static_cast<uint128_t>(rhs);
+		}
+		else if constexpr (std::is_same_v<T2,uint256_t>)
+		{
+			return !rhs.UPPER && static_cast<uint128_t>(lhs) == rhs.LOWER;
+		}
+		else
+		{
+			return rhs == lhs;
+		}
+
 	}
 
-	friend bool operator==(const uint128_t & lhs, const uint256_t & rhs)
+	template <std::integral T1, std::integral T2>
+	friend inline constexpr std::strong_ordering operator<=>(const T1 & lhs, const T2 & rhs)
 	{
-		return !rhs.upper128() && (lhs == rhs.lower128());
+		if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
+		{
+			auto comp_upper = lhs.UPPER <=> rhs.UPPER;
+			auto comp_lower = lhs.LOWER <=> rhs.LOWER;
+			return lhs.UPPER != rhs.UPPER ? comp_upper : comp_lower;
+		}
+		else if constexpr (std::is_same_v<T1,uint256_t>)
+		{
+			return lhs.UPPER ? std::strong_ordering::greater : lhs.LOWER <=> static_cast<uint128_t>(rhs);
+		}
+		else if constexpr (std::is_same_v<T2,uint256_t>)
+		{
+			return rhs.UPPER ? std::strong_ordering::less : static_cast<uint128_t>(lhs) <=> rhs.LOWER;
+		}
+		else
+		{
+			return rhs <=> lhs;
+		}
 	}
-
-	friend bool operator==(const uint256_t & lhs, const uint256_t & rhs) = default;
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	friend std::strong_ordering operator<=>(const T & lhs, const uint256_t & rhs) {
-		return uint256_t(lhs) <=> rhs;
-	}
-
-	friend std::strong_ordering operator<=>(const uint128_t & lhs, const uint256_t & rhs) {
-		return uint256_t(lhs) <=> rhs;
-	}
-
-	friend constexpr std::strong_ordering operator<=>(const uint256_t & lhs, const uint256_t & rhs) = default;
 
 	// Arithmetic Operators
 	template <std::integral T1, std::integral T2>
