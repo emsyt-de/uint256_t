@@ -117,7 +117,7 @@ public:
 	// Typecast Operators
 	constexpr operator bool() const
 	{
-		return static_cast<bool>(LOWER);
+		return static_cast<bool>(LOWER) || static_cast<bool>(UPPER);
 	}
 
 	constexpr operator uint8_t() const
