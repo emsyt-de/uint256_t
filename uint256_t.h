@@ -307,28 +307,6 @@ public:
 		return lhs = (lhs >> rhs);
 	}
 
-	// Logical Operators
-	friend inline constexpr bool operator!(const uint256_t & hs)
-	{
-		return ! static_cast<bool>(hs);
-	}
-
-	bool operator&&(const uint128_t & rhs) const;
-	bool operator&&(const uint256_t & rhs) const;
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	bool operator&&(const T & rhs) const{
-		return ((bool) *this && rhs);
-	}
-
-	bool operator||(const uint128_t & rhs) const;
-	bool operator||(const uint256_t & rhs) const;
-
-	template <typename T, typename = typename std::enable_if<std::is_integral<T>::value, T>::type >
-	bool operator||(const T & rhs) const{
-		return ((bool) *this || rhs);
-	}
-
 	// Comparison Operators
 	template <std::integral T1, std::integral T2>
 	friend inline bool operator==(const T1 & lhs, const T2 & rhs)

@@ -22,22 +22,6 @@ uint256_t & uint256_t::operator=(uint256_t && rhs){
     return *this;
 }
 
-bool uint256_t::operator&&(const uint128_t & rhs) const{
-    return (*this && uint256_t(rhs));
-}
-
-bool uint256_t::operator&&(const uint256_t & rhs) const{
-    return ((bool) *this && (bool) rhs);
-}
-
-bool uint256_t::operator||(const uint128_t & rhs) const{
-    return (*this || uint256_t(rhs));
-}
-
-bool uint256_t::operator||(const uint256_t & rhs) const{
-    return ((bool) *this || (bool) rhs);
-}
-
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
     // Save some calculations /////////////////////
     if (rhs == uint256_0){
