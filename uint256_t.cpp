@@ -4,7 +4,6 @@
 
 const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
-const uint256_t uint256_max = -1;
 
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
     // Save some calculations /////////////////////
@@ -37,36 +36,6 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
         adder >>= uint256_1;
     }
     return qr;
-}
-
-uint256_t & uint256_t::operator++(){
-    *this += uint256_1;
-    return *this;
-}
-
-uint256_t uint256_t::operator++(int){
-    uint256_t temp(*this);
-    ++*this;
-    return temp;
-}
-
-uint256_t & uint256_t::operator--(){
-    *this -= uint256_1;
-    return *this;
-}
-
-uint256_t uint256_t::operator--(int){
-    uint256_t temp(*this);
-    --*this;
-    return temp;
-}
-
-uint256_t uint256_t::operator+() const{
-    return *this;
-}
-
-uint256_t uint256_t::operator-() const{
-    return ~*this + uint256_1;
 }
 
 const uint128_t & uint256_t::upper128() const {

@@ -39,8 +39,8 @@ to do a general rewrite of this class.
 #include <concepts>
 #include <utility>
 
-class uint256_t;
 typedef __uint128_t uint128_t;
+class uint256_t;
 
 // Give uint256_t type traits
 namespace std {  // This is probably not a good idea
@@ -49,16 +49,7 @@ template <> struct is_integral   <uint256_t> : std::true_type {};
 template <> struct is_unsigned   <uint256_t> : std::true_type {};
 }
 
-class uint256_t{
-
-private:
-	static constexpr uint128_t uint128_0 = 0;
-	static constexpr uint128_t uint128_1 = 1;
-	static constexpr uint128_t uint128_64 = 64;
-	static constexpr uint128_t uint128_128 = 128;
-	static constexpr uint128_t uint128_256 = 256;
-
-	uint128_t UPPER = 0, LOWER = 0;
+class uint256_t {
 
 public:
 
@@ -103,7 +94,7 @@ public:
 		return static_cast<uint64_t>(u128);
 	}
 
-	// Assignment Operator
+	// Assignment Operators
 	uint256_t & operator=(const uint256_t & rhs) = default;
 	uint256_t & operator=(uint256_t && rhs) = default;
 
@@ -477,21 +468,57 @@ private:
 	void init(const std::string_view& s);
 
 public:
-	// Increment Operators
-	uint256_t & operator++();
-	uint256_t operator++(int);
+	/// Increment Operators
 
-	// Decrement Operators
-	uint256_t & operator--();
-	uint256_t operator--(int);
+	/// pre increment
+	friend uint256_t & operator++(uint256_t & hs)
+	{
+		static constexpr uint256_t uint256_1(1);
+		hs += uint256_1;
+		return hs;
+	}
 
-	// Nothing done since promotion doesn't work here
-	uint256_t operator+() const;
+	/// post increment
+	friend uint256_t operator++(uint256_t & hs, int)
+	{
+		static constexpr uint256_t uint256_1(1);
+		auto temp(hs);
+		hs += uint256_1;
+		return temp;
+	}
 
-	// two's complement
-	uint256_t operator-() const;
+	/// pre decrement
+	friend uint256_t & operator--(uint256_t & hs)
+	{
+		static constexpr uint256_t uint256_1(1);
+		hs -= uint256_1;
+		return hs;
+	}
 
-	// Get private values
+	/// post decrement
+	friend uint256_t operator--(uint256_t & hs, int)
+	{
+		static constexpr uint256_t uint256_1(1);
+		auto temp(hs);
+		hs -= uint256_1;
+		return temp;
+	}
+
+	/// positive sign operator
+	friend uint256_t operator+(const uint256_t & hs)
+	{
+		return hs;
+	}
+
+	/// negative sign operator
+	friend uint256_t operator-(const uint256_t & hs)
+	{
+		static constexpr uint256_t uint256_1(1);
+		return ~hs + uint256_1;
+	}
+
+
+	/// Get private values
 	const uint128_t & upper128() const;
 	const uint128_t & lower128() const;
 
@@ -500,8 +527,20 @@ public:
 
 	// Get string representation of value
 	std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
+
+private:
+	inline static constexpr uint128_t uint128_0 = 0;
+	inline static constexpr uint128_t uint128_1 = 1;
+	inline static constexpr uint128_t uint128_64 = 64;
+	inline static constexpr uint128_t uint128_128 = 128;
+	inline static constexpr uint128_t uint128_256 = 256;
+
+	uint128_t UPPER = 0, LOWER = 0;
+
+
 };
 
 // IO Operator
 std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs);
+
 #endif

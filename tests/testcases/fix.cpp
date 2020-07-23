@@ -5,8 +5,8 @@
 TEST(Arithmetic, increment){
     uint256_t value(0);
     EXPECT_EQ(++value, 1);
-    EXPECT_EQ(value++, 1);
-    EXPECT_EQ(++value, 3);
+	EXPECT_EQ(value++, 1);
+	EXPECT_EQ(++value, 3);
 }
 
 TEST(Arithmetic, decrement){
