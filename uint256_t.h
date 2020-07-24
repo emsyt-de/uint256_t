@@ -516,6 +516,8 @@
 			return ~hs + uint256_1;
 		}
 
+		/// IO Operator
+		friend std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs);
 
 		/// Get private values
 		const uint128_t & upper128() const { return upper; }
@@ -546,8 +548,5 @@
 
 
 	};
-
-	// IO Operator
-	std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs);
 
 	#endif
