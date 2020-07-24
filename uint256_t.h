@@ -521,9 +521,6 @@ public:
 	// Get bitsize of value
 	uint16_t bits() const;
 
-	// Get string representation of value
-	std::string str(uint8_t base = 10, const unsigned int & len = 0) const;
-
 private:
 	inline static constexpr uint128_t uint128_0 = 0;
 	inline static constexpr uint128_t uint128_1 = 1;

@@ -1,6 +1,8 @@
 #include "uint256_t.h"
 #include <vector>
 #include <cstring>
+#include <sstream>
+#include <iomanip>
 
 const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
@@ -65,6 +67,8 @@ const uint128_t & uint256_t::lower128() const {
 //	return ret;
 //}
 
+/// Get order of msb bit.
+/// Return 0 if value == 0, otherwise [1 ... 256].
 uint16_t uint256_t::bits() const{
 	uint16_t out = 0;
 	if(UPPER > std::numeric_limits<uint64_t>::max())
@@ -90,37 +94,29 @@ uint16_t uint256_t::bits() const{
 	return out;
 }
 
-std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
-    if ((base < 2) || (base > 36)){
-        throw std::invalid_argument("Base must be in the range 2-36");
-    }
-    std::string out = "";
-    if (!(*this)){
-        out = "0";
-    }
-    else{
-        std::pair <uint256_t, uint256_t> qr(*this, uint256_0);
-        do{
-            qr = divmod(qr.first, base);
-            out = "0123456789abcdefghijklmnopqrstuvwxyz"[(uint8_t) qr.second] + out;
-        } while (qr.first);
-    }
-    if (out.size() < len){
-        out = std::string(len - out.size(), '0') + out;
-    }
-    return out;
-}
-
-// stream operators
-std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs){
-    if (stream.flags() & stream.oct){
-        stream << rhs.str(8);
-    }
-    else if (stream.flags() & stream.dec){
-        stream << rhs.str(10);
-    }
-    else if (stream.flags() & stream.hex){
-        stream << rhs.str(16);
-    }
-    return stream;
+/// stream operators
+std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
+{
+	if(rhs == uint256_0)
+	{
+		// for value 0 at least one zero should be added to output stream
+		stream << '0';
+	}
+	else
+	{
+		std::ostringstream testwidth;
+		testwidth.setf(stream.flags());
+		testwidth << std::numeric_limits<uint64_t>::max();
+		auto width = static_cast<int>(testwidth.str().size());
+		auto u64_quarter = { uint256_t::upper64(rhs.upper128()), uint256_t::lower64(rhs.upper128()), uint256_t::upper64(rhs.lower128()), uint256_t::lower64(rhs.lower128())};
+		for(auto u64: u64_quarter)
+		{
+			if(u64)
+			{
+				stream << u64;
+				stream << std::left << std::setfill('0') << std::setw(width);
+			}
+		}
+	}
+	return stream;
 }

@@ -43,22 +43,6 @@ static const std::map <uint32_t, std::string> tests = {
     // std::make_pair(256, "uint256_t"),
 };
 
-TEST(Function, str){
-    // number of leading 0s
-    const std::string::size_type leading = 5;
-
-    // make sure all of the test strings create the ASCII version of the string
-    const uint256_t original(2216002924);
-    for(std::pair <uint32_t const, std::string>  t : tests){
-        EXPECT_EQ(original.str(t.first), t.second);
-    }
-
-    // add leading zeros
-    for(uint32_t base = 2; base <= 36; base++){
-        EXPECT_EQ(original.str(base, tests.at(base).size() + leading), std::string(leading, '0') + tests.at(base));
-    }
-}
-
 TEST(External, ostream){
     const uint256_t value(0xfedcba9876543210ULL);
 
