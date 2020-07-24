@@ -8,64 +8,45 @@ const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
 
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
-    // Save some calculations /////////////////////
-    if (rhs == uint256_0){
-        throw std::domain_error("Error: division or modulus by 0");
-    }
-    else if (rhs == uint256_1){
-        return std::pair <uint256_t, uint256_t> (lhs, uint256_0);
-    }
-    else if (lhs == rhs){
-        return std::pair <uint256_t, uint256_t> (uint256_1, uint256_0);
-    }
-    else if ((lhs == uint256_0) || (lhs < rhs)){
-        return std::pair <uint256_t, uint256_t> (uint256_0, lhs);
-    }
+	// Save some calculations /////////////////////
+	if (rhs == uint256_0){
+		throw std::domain_error("Error: division or modulus by 0");
+	}
+	else if (rhs == uint256_1){
+		return std::pair <uint256_t, uint256_t> (lhs, uint256_0);
+	}
+	else if (lhs == rhs){
+		return std::pair <uint256_t, uint256_t> (uint256_1, uint256_0);
+	}
+	else if ((lhs == uint256_0) || (lhs < rhs)){
+		return std::pair <uint256_t, uint256_t> (uint256_0, lhs);
+	}
 
-    std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
-    uint256_t copyd = rhs << (lhs.bits() - rhs.bits());
-    uint256_t adder = uint256_1 << (lhs.bits() - rhs.bits());
-    if (copyd > qr.second){
-        copyd >>= uint256_1;
-        adder >>= uint256_1;
-    }
-    while (qr.second >= rhs){
-        if (qr.second >= copyd){
-            qr.second -= copyd;
-            qr.first |= adder;
-        }
-        copyd >>= uint256_1;
-        adder >>= uint256_1;
-    }
-    return qr;
+	std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
+	uint256_t copyd = rhs << (lhs.bits() - rhs.bits());
+	uint256_t adder = uint256_1 << (lhs.bits() - rhs.bits());
+	if (copyd > qr.second){
+		copyd >>= uint256_1;
+		adder >>= uint256_1;
+	}
+	while (qr.second >= rhs){
+		if (qr.second >= copyd){
+			qr.second -= copyd;
+			qr.first |= adder;
+		}
+		copyd >>= uint256_1;
+		adder >>= uint256_1;
+	}
+	return qr;
 }
 
 const uint128_t & uint256_t::upper128() const {
-    return UPPER;
+	return UPPER;
 }
 
 const uint128_t & uint256_t::lower128() const {
-    return LOWER;
+	return LOWER;
 }
-
-//std::vector<uint8_t> uint256_t::export_bits() const {
-//    std::vector<uint8_t> ret;
-//    ret.reserve(32);
-//    UPPER.export_bits(ret);
-//    LOWER.export_bits(ret);
-//    return ret;
-//}
-
-//std::vector<uint8_t> uint256_t::export_bits_truncate() const {
-//    std::vector<uint8_t> ret = export_bits();
-
-//	//prune the zeroes
-//	int i = 0;
-//	while (ret[i] == 0 && i < 64) i++;
-//	ret.erase(ret.begin(), ret.begin() + i);
-
-//	return ret;
-//}
 
 /// Get order of msb bit.
 /// Return 0 if value == 0, otherwise [1 ... 256].
