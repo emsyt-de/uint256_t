@@ -53,7 +53,7 @@
 
 	public:
 
-		// Constructors
+		/// Constructors
 		uint256_t() = default;
 		uint256_t(const uint256_t & rhs) = default;
 		uint256_t(uint256_t && rhs) = default;
@@ -82,19 +82,11 @@
 			LOWER |= lower_rhs;
 		}
 
-		static inline uint64_t upper64(uint128_t u128) {
-			return u128>>64;
-		}
-
-		static inline uint64_t lower64(uint128_t u128) {
-			return static_cast<uint64_t>(u128);
-		}
-
-		// Assignment Operators
+		/// Assignment Operators
 		uint256_t & operator=(const uint256_t & rhs) = default;
 		uint256_t & operator=(uint256_t && rhs) = default;
 
-		// Typecast Operators
+		/// Typecast Operators
 		constexpr operator bool() const
 		{
 			return static_cast<bool>(LOWER) || static_cast<bool>(UPPER);
@@ -125,7 +117,9 @@
 			return LOWER;
 		}
 
-		// Bitwise Operators
+		/// Bitwise Operators
+
+		/// And
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr uint256_t operator&(const T1 & lhs, const T2 & rhs)
 		{
@@ -153,6 +147,7 @@
 			return lhs = (lhs & rhs);
 		}
 
+		/// Or
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr uint256_t operator|(const T1 & lhs, const T2 & rhs)
 		{
@@ -180,6 +175,7 @@
 			return lhs = (lhs | rhs);
 		}
 
+		/// Xor
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr uint256_t operator^(const T1 & lhs, const T2 & rhs)
 		{
@@ -207,12 +203,14 @@
 			return lhs = (lhs ^ rhs);
 		}
 
-		// invert operator
+		/// Invert operator
 		inline uint256_t operator~() const {
 			return uint256_t(~UPPER, ~LOWER);
 		}
 
-		// Bit Shift Operators
+		/// Bit Shift Operators
+
+		/// Shift left
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr uint256_t operator<<(const T1 & lhs, const T2 & rhs)
 		{
@@ -250,6 +248,7 @@
 			return lhs = (lhs << rhs);
 		}
 
+		/// Shift right
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr uint256_t operator>>(const T1 & lhs, const T2 & rhs)
 		{
@@ -287,7 +286,9 @@
 			return lhs = (lhs >> rhs);
 		}
 
-		// Comparison Operators
+		/// Comparison Operators
+
+		/// Equal
 		template <std::integral T1, std::integral T2>
 		friend inline bool operator==(const T1 & lhs, const T2 & rhs)
 		{
@@ -310,6 +311,7 @@
 
 		}
 
+		/// Three way compare
 		template <std::integral T1, std::integral T2>
 		friend inline constexpr std::strong_ordering operator<=>(const T1 & lhs, const T2 & rhs)
 		{
@@ -333,7 +335,9 @@
 			}
 		}
 
-		// Arithmetic Operators
+		/// Arithmetic Operators
+
+		/// Plus
 		template <std::integral T1, std::integral T2>
 		friend inline uint256_t operator+(const T1 & lhs, const T2 & rhs)
 		{
@@ -353,6 +357,7 @@
 			return lhs = static_cast <T1> (lhs + rhs);
 		}
 
+		/// Minus
 		template <std::integral T1, std::integral T2>
 		friend inline uint256_t operator-(const T1 & lhs, const T2 & rhs)
 		{
@@ -373,6 +378,7 @@
 			return lhs = static_cast <T1> (lhs - rhs);
 		}
 
+		/// Multiply
 		template <std::integral T1, std::integral T2>
 		friend inline uint256_t operator*(const T1 & lhs, const T2 & rhs){
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
@@ -424,6 +430,7 @@
 			return lhs = static_cast <T1> (lhs * rhs);
 		}
 
+		/// Divide
 		template <std::integral T1, std::integral T2>
 		friend inline uint256_t operator/(const T1 & lhs, const T2 & rhs){
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
@@ -441,6 +448,7 @@
 			return lhs = static_cast <T1> (lhs / rhs);
 		}
 
+		/// Modulo
 		template <std::integral T1, std::integral T2>
 		friend inline uint256_t operator%(const T1 & lhs, const T2 & rhs){
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
@@ -459,11 +467,6 @@
 		}
 
 
-	private:
-		static std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs);
-		void init(const std::string_view& s);
-
-	public:
 		/// Increment Operators
 
 		/// pre increment
@@ -515,13 +518,24 @@
 
 
 		/// Get private values
-		const uint128_t & upper128() const;
-		const uint128_t & lower128() const;
+		const uint128_t & upper128() const { return UPPER; }
+		const uint128_t & lower128() const { return LOWER; }
 
-		// Get bitsize of value
+		static inline uint64_t upper64(uint128_t u128) {
+			return u128>>64;
+		}
+
+		static inline uint64_t lower64(uint128_t u128) {
+			return static_cast<uint64_t>(u128);
+		}
+
+		/// Get order of msb bit.
+		/// Return 0 if value == 0, otherwise [1 ... 256].
 		uint16_t bits() const;
-
 	private:
+		static std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs);
+		void init(const std::string_view& s);
+
 		inline static constexpr uint128_t uint128_0 = 0;
 		inline static constexpr uint128_t uint128_1 = 1;
 		inline static constexpr uint128_t uint128_64 = 64;

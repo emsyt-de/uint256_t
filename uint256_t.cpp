@@ -44,14 +44,6 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
 	return qr;
 }
 
-const uint128_t & uint256_t::upper128() const {
-	return UPPER;
-}
-
-const uint128_t & uint256_t::lower128() const {
-	return LOWER;
-}
-
 /// Get order of msb bit.
 /// Return 0 if value == 0, otherwise [1 ... 256].
 uint16_t uint256_t::bits() const{
