@@ -60,26 +60,26 @@
 
 		template <std::integral S, std::integral T>
 		uint256_t(const S & upper_rhs, const T & lower_rhs)
-			: UPPER(upper_rhs), LOWER(lower_rhs)
+			: upper(upper_rhs), lower(lower_rhs)
 		{}
 
 		uint256_t(const uint128_t & upper_rhs, const uint128_t & lower_rhs)
-			: UPPER(upper_rhs), LOWER(lower_rhs)
+			: upper(upper_rhs), lower(lower_rhs)
 		{}
 		constexpr uint256_t(const uint128_t & lower_rhs)
-			: UPPER(uint128_0), LOWER(lower_rhs)
+			: upper(uint128_0), lower(lower_rhs)
 		{}
 
 		template <std::integral R, std::integral S, std::integral T, std::integral U>
 		uint256_t(const R & upper_lhs, const S & lower_lhs, const T & upper_rhs, const U & lower_rhs)
 		{
-			UPPER = upper_lhs;
-			UPPER = UPPER << 64;
-			UPPER |= lower_lhs;
+			upper = upper_lhs;
+			upper = upper << 64;
+			upper |= lower_lhs;
 
-			LOWER = upper_rhs;
-			LOWER = LOWER << 64;
-			LOWER |= lower_rhs;
+			lower = upper_rhs;
+			lower = lower << 64;
+			lower |= lower_rhs;
 		}
 
 		/// Assignment Operators
@@ -89,32 +89,32 @@
 		/// Typecast Operators
 		constexpr operator bool() const
 		{
-			return static_cast<bool>(LOWER) || static_cast<bool>(UPPER);
+			return static_cast<bool>(lower) || static_cast<bool>(upper);
 		}
 
 		constexpr operator uint8_t() const
 		{
-			return static_cast<uint8_t>(LOWER);
+			return static_cast<uint8_t>(lower);
 		}
 
 		constexpr operator uint16_t() const
 		{
-			return static_cast<uint16_t>(LOWER);
+			return static_cast<uint16_t>(lower);
 		}
 
 		constexpr operator uint32_t() const
 		{
-			return static_cast<uint32_t>(LOWER);
+			return static_cast<uint32_t>(lower);
 		}
 
 		constexpr operator uint64_t() const
 		{
-			return static_cast<uint64_t>(LOWER);
+			return static_cast<uint64_t>(lower);
 		}
 
 		constexpr operator uint128_t() const
 		{
-			return LOWER;
+			return lower;
 		}
 
 		/// Bitwise Operators
@@ -125,15 +125,15 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(lhs.UPPER & rhs.UPPER, lhs.LOWER & rhs.LOWER);
+				return uint256_t(lhs.upper & rhs.upper, lhs.lower & rhs.lower);
 			}
 			else if constexpr (std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(uint128_0, lhs.LOWER & static_cast<uint128_t>(rhs));
+				return uint256_t(uint128_0, lhs.lower & static_cast<uint128_t>(rhs));
 			}
 			else if constexpr (std::is_same_v<T2,uint256_t>)
 			{
-				return uint256_t(uint128_0, static_cast<uint128_t>(lhs) & rhs.LOWER);
+				return uint256_t(uint128_0, static_cast<uint128_t>(lhs) & rhs.lower);
 			}
 			else
 			{
@@ -153,15 +153,15 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(lhs.UPPER | rhs.UPPER, lhs.LOWER | rhs.LOWER);
+				return uint256_t(lhs.upper | rhs.upper, lhs.lower | rhs.lower);
 			}
 			else if constexpr (std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(lhs.UPPER, lhs.LOWER | static_cast<uint128_t>(rhs));
+				return uint256_t(lhs.upper, lhs.lower | static_cast<uint128_t>(rhs));
 			}
 			else if constexpr (std::is_same_v<T2,uint256_t>)
 			{
-				return uint256_t(rhs.UPPER, static_cast<uint128_t>(lhs) | rhs.LOWER);
+				return uint256_t(rhs.upper, static_cast<uint128_t>(lhs) | rhs.lower);
 			}
 			else
 			{
@@ -181,15 +181,15 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(lhs.UPPER ^ rhs.UPPER, lhs.LOWER ^ rhs.LOWER);
+				return uint256_t(lhs.upper ^ rhs.upper, lhs.lower ^ rhs.lower);
 			}
 			else if constexpr (std::is_same_v<T1,uint256_t>)
 			{
-				return uint256_t(lhs.UPPER, lhs.LOWER ^ static_cast<uint128_t>(rhs));
+				return uint256_t(lhs.upper, lhs.lower ^ static_cast<uint128_t>(rhs));
 			}
 			else if constexpr (std::is_same_v<T2,uint256_t>)
 			{
-				return uint256_t(rhs.UPPER, static_cast<uint128_t>(lhs) ^ rhs.LOWER);
+				return uint256_t(rhs.upper, static_cast<uint128_t>(lhs) ^ rhs.lower);
 			}
 			else
 			{
@@ -205,7 +205,7 @@
 
 		/// Invert operator
 		inline uint256_t operator~() const {
-			return uint256_t(~UPPER, ~LOWER);
+			return uint256_t(~upper, ~lower);
 		}
 
 		/// Bit Shift Operators
@@ -216,21 +216,21 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				const uint128_t shift = rhs.LOWER;
-				if (rhs.UPPER || (shift >= uint128_256)){
+				const uint128_t shift = rhs.lower;
+				if (rhs.upper || (shift >= uint128_256)){
 					return 0;
 				}
 				else if (shift == uint128_128){
-					return uint256_t(lhs.LOWER, uint128_0);
+					return uint256_t(lhs.lower, uint128_0);
 				}
 				else if (shift == uint128_0){
 					return lhs;
 				}
 				else if (shift < uint128_128){
-					return uint256_t((lhs.UPPER << shift) + (lhs.LOWER >> (uint128_128 - shift)), lhs.LOWER << shift);
+					return uint256_t((lhs.upper << shift) + (lhs.lower >> (uint128_128 - shift)), lhs.lower << shift);
 				}
 				else if ((uint128_256 > shift) && (shift > uint128_128)){
-					return uint256_t(lhs.LOWER << (shift - uint128_128), uint128_0);
+					return uint256_t(lhs.lower << (shift - uint128_128), uint128_0);
 				}
 				else{
 					return 0;
@@ -254,21 +254,21 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				const uint128_t shift = rhs.LOWER;
-				if (rhs.UPPER || (shift >= uint128_256)){
+				const uint128_t shift = rhs.lower;
+				if (rhs.upper || (shift >= uint128_256)){
 					return 0;
 				}
 				else if (shift == uint128_128){
-					return lhs.UPPER;
+					return lhs.upper;
 				}
 				else if (shift == uint128_0){
 					return lhs;
 				}
 				else if (shift < uint128_128){
-					return uint256_t(lhs.UPPER >> shift, (lhs.UPPER << (uint128_128 - shift)) + (lhs.LOWER >> shift));
+					return uint256_t(lhs.upper >> shift, (lhs.upper << (uint128_128 - shift)) + (lhs.lower >> shift));
 				}
 				else if ((uint128_256 > shift) && (shift > uint128_128)){
-					return uint256_t(lhs.UPPER >> (shift - uint128_128));
+					return uint256_t(lhs.upper >> (shift - uint128_128));
 				}
 				else{
 					return 0;
@@ -294,15 +294,15 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				return lhs.UPPER == rhs.UPPER && lhs.LOWER == rhs.LOWER;
+				return lhs.upper == rhs.upper && lhs.lower == rhs.lower;
 			}
 			else if constexpr (std::is_same_v<T1,uint256_t>)
 			{
-				return !lhs.UPPER && lhs.LOWER == static_cast<uint128_t>(rhs);
+				return !lhs.upper && lhs.lower == static_cast<uint128_t>(rhs);
 			}
 			else if constexpr (std::is_same_v<T2,uint256_t>)
 			{
-				return !rhs.UPPER && static_cast<uint128_t>(lhs) == rhs.LOWER;
+				return !rhs.upper && static_cast<uint128_t>(lhs) == rhs.lower;
 			}
 			else
 			{
@@ -317,17 +317,17 @@
 		{
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				auto comp_upper = lhs.UPPER <=> rhs.UPPER;
-				auto comp_lower = lhs.LOWER <=> rhs.LOWER;
-				return lhs.UPPER != rhs.UPPER ? comp_upper : comp_lower;
+				auto comp_upper = lhs.upper <=> rhs.upper;
+				auto comp_lower = lhs.lower <=> rhs.lower;
+				return lhs.upper != rhs.upper ? comp_upper : comp_lower;
 			}
 			else if constexpr (std::is_same_v<T1,uint256_t>)
 			{
-				return lhs.UPPER ? std::strong_ordering::greater : lhs.LOWER <=> static_cast<uint128_t>(rhs);
+				return lhs.upper ? std::strong_ordering::greater : lhs.lower <=> static_cast<uint128_t>(rhs);
 			}
 			else if constexpr (std::is_same_v<T2,uint256_t>)
 			{
-				return rhs.UPPER ? std::strong_ordering::less : static_cast<uint128_t>(lhs) <=> rhs.LOWER;
+				return rhs.upper ? std::strong_ordering::less : static_cast<uint128_t>(lhs) <=> rhs.lower;
 			}
 			else
 			{
@@ -518,8 +518,8 @@
 
 
 		/// Get private values
-		const uint128_t & upper128() const { return UPPER; }
-		const uint128_t & lower128() const { return LOWER; }
+		const uint128_t & upper128() const { return upper; }
+		const uint128_t & lower128() const { return lower; }
 
 		static inline uint64_t upper64(uint128_t u128) {
 			return u128>>64;
@@ -542,7 +542,7 @@
 		inline static constexpr uint128_t uint128_128 = 128;
 		inline static constexpr uint128_t uint128_256 = 256;
 
-		uint128_t UPPER = 0, LOWER = 0;
+		uint128_t upper = 0, lower = 0;
 
 
 	};

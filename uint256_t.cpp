@@ -48,25 +48,21 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
 /// Return 0 if value == 0, otherwise [1 ... 256].
 uint16_t uint256_t::bits() const{
 	uint16_t out = 0;
-	if(UPPER > std::numeric_limits<uint64_t>::max())
+	if(upper > std::numeric_limits<uint64_t>::max())
 	{
-		uint64_t upper = UPPER >> 64;
-		out = 256 - static_cast<uint16_t>(__builtin_clzll(upper)); // upper has to be > 0
+		out = 256 - static_cast<uint16_t>(__builtin_clzll(upper >> 64)); // upper has to be > 0
 	}
-	else if (UPPER > 0)
+	else if (upper > 0)
 	{
-		uint64_t upper = static_cast<uint64_t>(UPPER);
-		out = 192 - static_cast<uint16_t>(__builtin_clzll(upper)); // upper has to be > 0
+		out = 192 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(upper))); // upper has to be > 0
 	}
-	else if(LOWER > std::numeric_limits<uint64_t>::max())
+	else if(lower > std::numeric_limits<uint64_t>::max())
 	{
-		uint64_t lower = LOWER >> 64;
-		out = 128 - static_cast<uint16_t>(__builtin_clzll(lower)); // lower has to be > 0
+		out = 128 - static_cast<uint16_t>(__builtin_clzll(lower >> 64)); // lower has to be > 0
 	}
-	else if(LOWER > 0)
+	else if(lower > 0)
 	{
-		uint64_t lower = static_cast<uint64_t>(LOWER);
-		out = 64 - static_cast<uint16_t>(__builtin_clzll(lower)); // lower has to be > 0
+		out = 64 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(lower))); // lower has to be > 0
 	}
 	return out;
 }
