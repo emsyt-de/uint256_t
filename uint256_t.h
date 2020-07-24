@@ -449,7 +449,7 @@ public:
 	friend inline uint256_t operator%(const T1 & lhs, const T2 & rhs){
 		if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 		{
-			return lhs - (rhs * (lhs / rhs));
+			return divmod(lhs,rhs).second;
 		}
 		else
 		{
