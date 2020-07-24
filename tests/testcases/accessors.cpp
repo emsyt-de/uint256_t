@@ -4,7 +4,7 @@
 
 TEST(Accessor, bits){
     uint256_t value = 1;
-    for(uint32_t i = 0; i < 127; i++){
+	for(uint32_t i = 0; i < 255; i++){
         EXPECT_EQ(value.bits(), i + 1);                     // before shift
         value <<= 1;
     }

@@ -66,23 +66,28 @@ const uint128_t & uint256_t::lower128() const {
 //}
 
 uint16_t uint256_t::bits() const{
-    uint16_t out = 0;
-    if (UPPER){
-        out = 128;
-        uint128_t up = UPPER;
-        while (up){
-            up >>= uint128_1;
-            out++;
-        }
-    }
-    else{
-        uint128_t low = LOWER;
-        while (low){
-            low >>= uint128_1;
-            out++;
-        }
-    }
-    return out;
+	uint16_t out = 0;
+	if(UPPER > std::numeric_limits<uint64_t>::max())
+	{
+		uint64_t upper = UPPER >> 64;
+		out = 256 - static_cast<uint16_t>(__builtin_clzll(upper)); // upper has to be > 0
+	}
+	else if (UPPER > 0)
+	{
+		uint64_t upper = static_cast<uint64_t>(UPPER);
+		out = 192 - static_cast<uint16_t>(__builtin_clzll(upper)); // upper has to be > 0
+	}
+	else if(LOWER > std::numeric_limits<uint64_t>::max())
+	{
+		uint64_t lower = LOWER >> 64;
+		out = 128 - static_cast<uint16_t>(__builtin_clzll(lower)); // lower has to be > 0
+	}
+	else if(LOWER > 0)
+	{
+		uint64_t lower = static_cast<uint64_t>(LOWER);
+		out = 64 - static_cast<uint16_t>(__builtin_clzll(lower)); // lower has to be > 0
+	}
+	return out;
 }
 
 std::string uint256_t::str(uint8_t base, const unsigned int & len) const{
