@@ -3,34 +3,38 @@
 #include <cstring>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
 
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs) {
 	// Save some calculations /////////////////////
-	if (rhs == uint256_0){
+	if (rhs == uint256_0)
+	{
 		throw std::domain_error("Error: division or modulus by 0");
 	}
-	else if (rhs == uint256_1){
+	else if (rhs == uint256_1)
+	{
 		return std::pair <uint256_t, uint256_t> (lhs, uint256_0);
 	}
-	else if (lhs == rhs){
+	else if (lhs == rhs)
+	{
 		return std::pair <uint256_t, uint256_t> (uint256_1, uint256_0);
 	}
-	else if ((lhs == uint256_0) || (lhs < rhs)){
+	else if ((lhs == uint256_0) || (lhs < rhs))
+	{
 		return std::pair <uint256_t, uint256_t> (uint256_0, lhs);
 	}
 
 	std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
-	uint256_t copyd = rhs << (lhs.bits() - rhs.bits());
-	uint256_t adder = uint256_1 << (lhs.bits() - rhs.bits());
-	if (copyd > qr.second){
-		copyd >>= uint256_1;
-		adder >>= uint256_1;
-	}
-	while (qr.second >= rhs){
-		if (qr.second >= copyd){
+	auto msb_order_diff = lhs.bits() - rhs.bits();
+	uint256_t copyd = rhs << msb_order_diff;
+	uint256_t adder = uint256_1 << msb_order_diff;
+	while (qr.second >= rhs)
+	{
+		if (qr.second >= copyd)
+		{
 			qr.second -= copyd;
 			qr.first |= adder;
 		}
@@ -90,12 +94,17 @@ std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
 		testwidth << std::numeric_limits<uint64_t>::max();
 		auto width = static_cast<int>(testwidth.str().size());
 		auto u64_quarter = { uint256_t::upper64(rhs.upper128()), uint256_t::lower64(rhs.upper128()), uint256_t::upper64(rhs.lower128()), uint256_t::lower64(rhs.lower128())};
+		bool first_value = true;
 		for(auto u64: u64_quarter)
 		{
-			if(u64)
+			if(u64 && first_value)
 			{
 				stream << u64;
-				stream << std::left << std::setfill('0') << std::setw(width);
+				first_value = false;
+			}
+			else if(u64)
+			{
+				stream << std::left << std::setfill('0') << std::setw(width)<<u64;
 			}
 		}
 	}
