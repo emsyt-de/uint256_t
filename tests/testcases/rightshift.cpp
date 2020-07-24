@@ -4,6 +4,14 @@
 
 TEST(BitShift, right){
     // operator>>
+	uint256_t val128(0x0,0x0,0xffffffffffffffffULL,0xffffffffffffffffULL);
+	uint128_t exp128 = 0xffffffffffffffffULL;
+	exp128 <<= 64;
+	exp128 |= 0xffffffffffffffffULL;
+	for(uint8_t i = 0; i < 128; i++){
+		EXPECT_EQ(val128 >> i, exp128 >> i);
+	}
+
     uint256_t val(0xffffffffffffffffULL);
     uint64_t exp = 0xffffffffffffffffULL;
     for(uint8_t i = 0; i < 64; i++){

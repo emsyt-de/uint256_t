@@ -3,9 +3,8 @@
 #include "uint256_t.h"
 
 TEST(Arithmetic, divide){
-    const uint256_t big    (0xfedbca9876543210ULL);
-    const uint256_t small  (0xffffULL);
-    const uint256_t res_val(0xfedcc9753fc9ULL);
+	const uint256_t big    (0xfedbca9876543210ULL,0xfedbca9876543210ULL,0xfedbca9876543210ULL,0xfedbca9876543210ULL);
+	const uint256_t small  (0xffffULL,0xffffULL,0xffffULL,0xffffULL);
 
     EXPECT_EQ(small / small, 1);
     EXPECT_EQ(small / big,   0);

@@ -4,6 +4,12 @@
 
 TEST(BitShift, left){
     // operator<<
+	uint256_t val128 = 1;
+	uint128_t exp128 = 1;
+	for(uint8_t i = 0; i < 128; i++){
+		EXPECT_EQ(val128 << i, exp128 << i);
+	}
+
     uint256_t val(0x1);
     uint64_t exp_val = 1;
     for(uint8_t i = 0; i < 64; i++){
@@ -80,6 +86,7 @@ TEST(External, shift_left){
     EXPECT_EQ(u32  << uint256_t(31),  uint256_t(0x7fffffff00000000ULL));
     EXPECT_EQ(u64  << uint256_t(63),  uint256_t(0x0000000000000000ULL, 0x0000000000000000ULL, 0x7fffffffffffffffULL, 0x0000000000000000ULL));
     EXPECT_EQ(u128 << uint256_t(127), uint256_t(0x7fffffffffffffffULL, 0xffffffffffffffffULL, 0x0000000000000000ULL, 0x0000000000000000ULL));
+	EXPECT_EQ(1 << uint256_t(255), uint256_t(0x8000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL));
 
     EXPECT_EQ(u8   <<= uint256_t(7),   (uint8_t)   0);
     EXPECT_EQ(u16  <<= uint256_t(15),  (uint16_t)  0);
