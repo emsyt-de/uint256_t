@@ -4,8 +4,11 @@
 
 TEST(Arithmetic, multiply){
     uint256_t val(0xfedbca9876543210ULL);
+	uint256_t val2(0x8000000000ULL);
 
     EXPECT_EQ(val * val, uint256_t(0x0000000000000000ULL, 0x0000000000000000ULL, 0xfdb8e2bacbfe7cefULL, 0x010e6cd7a44a4100ULL));
+	EXPECT_EQ(val * val2, uint256_t(0x0000000000000000ULL, 0x0000000000000000ULL, 0x7f6de54c3b, 0x2a19080000000000));
+	EXPECT_EQ(val2 * val, uint256_t(0x0000000000000000ULL, 0x0000000000000000ULL, 0x7f6de54c3b, 0x2a19080000000000));
 
     const uint256_t zero = 0;
     EXPECT_EQ(val  * zero, zero);

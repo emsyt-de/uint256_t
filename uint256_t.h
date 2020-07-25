@@ -383,41 +383,7 @@
 		friend inline uint256_t operator*(const T1 & lhs, const T2 & rhs){
 			if constexpr (std::is_same_v<T1,T2> && std::is_same_v<T1,uint256_t>)
 			{
-				// split values into 4 64-bit parts
-				uint128_t top[4] = {uint256_t::upper64(lhs.upper128()), uint256_t::lower64(lhs.upper128()), uint256_t::upper64(lhs.lower128()), uint256_t::lower64(lhs.lower128())};
-				uint128_t bottom[4] = {uint256_t::upper64(rhs.upper128()), uint256_t::lower64(rhs.upper128()), uint256_t::upper64(rhs.lower128()), uint256_t::lower64(rhs.lower128())};
-				uint128_t products[4][4];
-
-				// multiply each component of the values
-				for(int y = 3; y > -1; y--){
-					for(int x = 3; x > -1; x--){
-						products[3 - y][x] = top[x] * bottom[y];
-					}
-				}
-
-				// first row
-				uint128_t fourth64 = uint128_t(uint256_t::lower64(products[0][3]));
-				uint128_t third64  = uint128_t(uint256_t::lower64(products[0][2])) + uint128_t(uint256_t::upper64(products[0][3]));
-				uint128_t second64 = uint128_t(uint256_t::lower64(products[0][1])) + uint128_t(uint256_t::upper64(products[0][2]));
-				uint128_t first64  = uint128_t(uint256_t::lower64(products[0][0])) + uint128_t(uint256_t::upper64(products[0][1]));
-
-				// second row
-				third64  += uint128_t(uint256_t::lower64(products[1][3]));
-				second64 += uint128_t(uint256_t::lower64(products[1][2])) + uint128_t(uint256_t::upper64(products[1][3]));
-				first64  += uint128_t(uint256_t::lower64(products[1][1])) + uint128_t(uint256_t::upper64(products[1][2]));
-
-				// third row
-				second64 += uint128_t(uint256_t::lower64(products[2][3]));
-				first64  += uint128_t(uint256_t::lower64(products[2][2])) + uint128_t(uint256_t::upper64(products[2][3]));
-
-				// fourth row
-				first64  += uint128_t(uint256_t::lower64(products[3][3]));
-
-				// combines the values, taking care of carry over
-				return uint256_t(first64 << uint128_64, uint128_0) +
-						uint256_t(uint256_t::upper64(third64), third64 << uint128_64) +
-						uint256_t(second64, uint128_0) +
-						uint256_t(fourth64);
+				return multiply(lhs,rhs);
 			}
 			else
 			{
@@ -536,6 +502,7 @@
 		/// Return 0 if value == 0, otherwise [1 ... 256].
 		uint16_t bits() const;
 	private:
+		static uint256_t multiply(const uint256_t & lhs, const uint256_t & rhs);
 		static std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs);
 		void init(const std::string_view& s);
 

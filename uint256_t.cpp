@@ -8,10 +8,66 @@
 const uint256_t uint256_0 = 0;
 const uint256_t uint256_1 = 1;
 
+uint256_t uint256_t::multiply(const uint256_t & lhs, const uint256_t & rhs)
+{
+	auto lhs_msb_bit_number = lhs.bits();
+	auto lhs_msb_exponential = uint256_1<<(lhs_msb_bit_number-1);
+	auto rhs_msb_bit_number = rhs.bits();
+	auto rhs_msb_exponential = uint256_1<<(rhs_msb_bit_number-1);
+	if(lhs == uint256_0 || rhs == uint256_0)
+	{
+		return uint256_0;
+	}
+	else if(lhs == lhs_msb_exponential) // Save calculations for 2^n numbers
+	{
+		return rhs << (lhs_msb_bit_number-1);
+	}
+	else if(rhs == rhs_msb_exponential)
+	{
+		return lhs << (rhs_msb_bit_number-1);
+	}
+
+	// split values into 4 64-bit parts
+	uint128_t top[4] = {uint256_t::upper64(lhs.upper128()), uint256_t::lower64(lhs.upper128()), uint256_t::upper64(lhs.lower128()), uint256_t::lower64(lhs.lower128())};
+	uint128_t bottom[4] = {uint256_t::upper64(rhs.upper128()), uint256_t::lower64(rhs.upper128()), uint256_t::upper64(rhs.lower128()), uint256_t::lower64(rhs.lower128())};
+	uint128_t products[4][4];
+
+	// multiply each component of the values
+	for(int y = 3; y > -1; y--){
+		for(int x = 3; x > -1; x--){
+			products[3 - y][x] = top[x] * bottom[y];
+		}
+	}
+
+	// first row
+	uint128_t fourth64 = uint128_t(uint256_t::lower64(products[0][3]));
+	uint128_t third64  = uint128_t(uint256_t::lower64(products[0][2])) + uint128_t(uint256_t::upper64(products[0][3]));
+	uint128_t second64 = uint128_t(uint256_t::lower64(products[0][1])) + uint128_t(uint256_t::upper64(products[0][2]));
+	uint128_t first64  = uint128_t(uint256_t::lower64(products[0][0])) + uint128_t(uint256_t::upper64(products[0][1]));
+
+	// second row
+	third64  += uint128_t(uint256_t::lower64(products[1][3]));
+	second64 += uint128_t(uint256_t::lower64(products[1][2])) + uint128_t(uint256_t::upper64(products[1][3]));
+	first64  += uint128_t(uint256_t::lower64(products[1][1])) + uint128_t(uint256_t::upper64(products[1][2]));
+
+	// third row
+	second64 += uint128_t(uint256_t::lower64(products[2][3]));
+	first64  += uint128_t(uint256_t::lower64(products[2][2])) + uint128_t(uint256_t::upper64(products[2][3]));
+
+	// fourth row
+	first64  += uint128_t(uint256_t::lower64(products[3][3]));
+
+	// combines the values, taking care of carry over
+	return uint256_t(first64 << uint128_64, uint128_0) +
+			uint256_t(uint256_t::upper64(third64), third64 << uint128_64) +
+			uint256_t(second64, uint128_0) +
+			uint256_t(fourth64);
+}
+
 std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const uint256_t & rhs)
 {
-	auto hrs_msb_bit_number = rhs.bits();
-	auto hrs_msb_exponential = uint256_1<<(hrs_msb_bit_number-1);
+	auto rhs_msb_bit_number = rhs.bits();
+	auto rhs_msb_exponential = uint256_1<<(rhs_msb_bit_number-1);
 	/// Save some calculations
 	if (rhs == uint256_0)
 	{
@@ -29,13 +85,13 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
 	{
 		return std::pair <uint256_t, uint256_t> (uint256_0, lhs);
 	}
-	else if(rhs == hrs_msb_exponential) // check if only one bit is set (2^n)
+	else if(rhs == rhs_msb_exponential) // check if only one bit is set (2^n)
 	{
-		return std::pair(lhs >> (hrs_msb_bit_number-1), lhs & (hrs_msb_exponential-1));
+		return std::pair(lhs >> (rhs_msb_bit_number-1), lhs & (rhs_msb_exponential-1));
 	}
 
 	std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
-	auto msb_order_diff = lhs.bits() - hrs_msb_bit_number;
+	auto msb_order_diff = lhs.bits() - rhs_msb_bit_number;
 	uint256_t copyd = rhs << msb_order_diff;
 	uint256_t adder = uint256_1 << msb_order_diff;
 	while (qr.second >= rhs)
@@ -75,6 +131,8 @@ uint16_t uint256_t::bits() const{
 }
 
 /// stream operators
+
+/// out stream supports hex, oct and dec formatting
 std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
 {
 	if(rhs == uint256_0)
@@ -127,23 +185,27 @@ std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
 	return stream;
 }
 
-/// Accepts hex format string
+/// In stream operator accepts hex, dec and oct formated strings
 std::istream & operator>>(std::istream & stream, uint256_t & rhs)
 {
 	std::string sv;
 	stream >> sv;
 	bool is_hex = sv.compare(0, 2, "0x") == 0 && sv.size() > 2 && sv.size() <= 66 && sv.find_first_not_of("0123456789abcdefABCDEF", 2) == std::string::npos;
+	bool is_oct = sv.compare(0, 1, "0") == 0 && sv.size() > 1 && sv.size() <= 86 && sv.find_first_not_of("01234567", 1) == std::string::npos;
+	bool is_dec = sv.size() > 0 && sv.size() <= 80 && sv.find_first_not_of("0123456789", 0) == std::string::npos;
 	if(is_hex)
 	{
+		rhs = uint256_0;
 		sv = sv.substr(2);
 		std::vector<uint64_t> result;
+		uint256_t base = 16;
+		uint256_t exponent = uint256_0;
 		while(sv.size())
 		{
 			size_t idx;
 			auto size = std::max(sv.size(),16UL);
 			auto num = std::stoul(sv.substr(0,size),&idx,16);
-			result.push_back(num);
-			sv.substr(idx);
+//			rhs += uint256_t(num) * exp(base,exponent);
 		}
 		if(result.size() < 4)
 		{
