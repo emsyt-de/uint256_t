@@ -44,19 +44,27 @@ static const std::map <uint32_t, std::string> tests = {
 };
 
 TEST(External, ostream){
-    const uint256_t value(0xfedcba9876543210ULL);
+	const uint256_t value1(1000000);
+	const uint256_t value2(0x0000000000000002ULL,0x00dcba9876543210ULL,0x0000000000000000ULL,0xfedcba9876543210ULL);
 
     // write out octal uint256_t
-    std::stringstream oct; oct << std::oct << value;
-    EXPECT_EQ(oct.str(), "1773345651416625031020");
+	std::stringstream oct1; oct1 << std::oct << value1;
+	std::stringstream oct2; oct2 << std::oct << value2;
+	EXPECT_EQ(oct1.str(), "3641100");
+	EXPECT_EQ(oct2.str(), "20015627246073124144100000000000000000000001773345651416625031020");
+
+	// write out hexadecimal uint256_t
+	std::stringstream hex1; hex1 << std::hex << value1;
+	std::stringstream hex2; hex2 << std::hex << value2;
+	EXPECT_EQ(hex1.str(), "f4240");
+	EXPECT_EQ(hex2.str(), "200dcba98765432100000000000000000fedcba9876543210");
+
 
     // write out decimal uint256_t
-    std::stringstream dec; dec << std::dec << value;
-    EXPECT_EQ(dec.str(), "18364758544493064720");
-
-    // write out hexadecimal uint256_t
-    std::stringstream hex; hex << std::hex << value;
-    EXPECT_EQ(hex.str(), "fedcba9876543210");
+	std::stringstream dec1; dec1 << std::dec << value1;
+	std::stringstream dec2; dec2 << std::dec << value2;
+	EXPECT_EQ(dec1.str(), "1000000");
+	EXPECT_EQ(dec2.str(), "12575345098146018056657306966606486499429149247268856279568");
 
     // zero
     std::stringstream zero; zero << uint256_t();

@@ -8,6 +8,7 @@ TEST(Arithmetic, modulo){
     const uint256_t val_mod(0xfedcba9876543210ULL);
 
     EXPECT_EQ(val % val_mod, uint256_t(0x63794f9d55c8d29f));
+	EXPECT_EQ(23 % 8, 7);
 
     // no remainder
     const uint256_t val_0  (0xfedcba9876543210, 0, 0, 0);

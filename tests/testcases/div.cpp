@@ -5,9 +5,14 @@
 TEST(Arithmetic, divide){
 	const uint256_t big    (0xfedbca9876543210ULL,0xfedbca9876543210ULL,0xfedbca9876543210ULL,0xfedbca9876543210ULL);
 	const uint256_t small  (0xffffULL,0xffffULL,0xffffULL,0xffffULL);
+	const uint256_t small2  (0x800ULL,0x0ULL,0x0ULL,0x0ULL);
 
     EXPECT_EQ(small / small, 1);
-    EXPECT_EQ(small / big,   0);
+	EXPECT_EQ(small2 / small2, 1);
+	EXPECT_EQ(small / big, 0);
+	EXPECT_EQ(big / small, 280224226164681);
+	EXPECT_EQ(big / small2, 8967038409034374);
+	EXPECT_EQ(uint256_t(23)/8,2);
 
     EXPECT_EQ(big   / big,   1);
 
