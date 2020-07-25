@@ -22,6 +22,7 @@ target_sources(UInt256Tests PRIVATE
 	mult.cpp
 	div.cpp
 	mod.cpp
+	exp.cpp
 	equation.cpp
 	fix.cpp
 	unary.cpp

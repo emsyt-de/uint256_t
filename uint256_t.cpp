@@ -107,6 +107,18 @@ std::pair <uint256_t, uint256_t> uint256_t::divmod(const uint256_t & lhs, const 
 	return qr;
 }
 
+uint256_t uint256_t::exp(const uint256_t & base, const uint256_t & exponent)
+{
+	auto result = uint256_1;
+	auto l_exp = exponent;
+	while(l_exp > uint128_0)
+	{
+		result *= base;
+		--l_exp;
+	}
+	return result;
+}
+
 /// Get order of msb bit.
 /// Return 0 if value == 0, otherwise [1 ... 256].
 uint16_t uint256_t::bits() const{

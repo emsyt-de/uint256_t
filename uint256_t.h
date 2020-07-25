@@ -501,6 +501,8 @@
 		/// Get order of msb bit.
 		/// Return 0 if value == 0, otherwise [1 ... 256].
 		uint16_t bits() const;
+
+		static uint256_t exp(const uint256_t & base, const uint256_t & exponent);
 	private:
 		static uint256_t multiply(const uint256_t & lhs, const uint256_t & rhs);
 		static std::pair <uint256_t, uint256_t> divmod(const uint256_t & lhs, const uint256_t & rhs);
