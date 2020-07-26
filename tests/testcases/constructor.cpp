@@ -63,3 +63,9 @@ TEST(Constructor, four){
         }
     }
 }
+
+TEST(Constructor, five){
+	EXPECT_EQ(uint256_t("10001"), 10001);
+	EXPECT_EQ(uint256_t("02347171253124751254"), 02347171253124751254);
+	EXPECT_EQ(uint256_t("0x0adf234717125312"), 0x0adf234717125312);
+}
