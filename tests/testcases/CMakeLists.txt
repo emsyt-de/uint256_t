@@ -26,7 +26,7 @@ target_sources(UInt256Tests PRIVATE
 	equation.cpp
 	fix.cpp
 	unary.cpp
-	functions.cpp
+	stream.cpp
 	type_traits.cpp
 )
 

@@ -180,7 +180,7 @@ std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
 		};
 		if(stream.flags() & std::ios::hex)
 		{
-			// divide with max 16^n dec number for 64-bit size (2^64 == 16^16)
+			// divide with max 16^n hex number for 64-bit size (2^64 == 16^16)
 			gen_out(stream,rhs,uint256_1<<64,16);
 		}
 		else if(stream.flags() & std::ios::oct)
@@ -200,30 +200,49 @@ std::ostream & operator<<(std::ostream & stream, const uint256_t & rhs)
 /// In stream operator accepts hex, dec and oct formated strings
 std::istream & operator>>(std::istream & stream, uint256_t & rhs)
 {
-	std::string sv;
-	stream >> sv;
-	bool is_hex = sv.compare(0, 2, "0x") == 0 && sv.size() > 2 && sv.size() <= 66 && sv.find_first_not_of("0123456789abcdefABCDEF", 2) == std::string::npos;
-	bool is_oct = sv.compare(0, 1, "0") == 0 && sv.size() > 1 && sv.size() <= 86 && sv.find_first_not_of("01234567", 1) == std::string::npos;
+	std::string s;
+	stream >> s;
+	std::string_view sv = s;
+	bool is_hex = sv.starts_with("0x") && sv.size() > 2 && sv.size() <= 66 && sv.find_first_not_of("0123456789abcdefABCDEF", 2) == std::string::npos;
+	bool is_oct = sv.starts_with('0') && sv.size() > 1 && sv.size() <= 86 && sv.find_first_not_of("01234567", 1) == std::string::npos;
 	bool is_dec = sv.size() > 0 && sv.size() <= 80 && sv.find_first_not_of("0123456789", 0) == std::string::npos;
+	auto gen_in = [](decltype (rhs) & hs, decltype (sv) & sv, const uint64_t & base, size_t max_size) -> void
+	{
+			hs = uint256_0;
+			int l_base = static_cast<int>(base);
+			std::vector<uint64_t> result;
+			uint256_t exponent = uint256_0;
+			while(sv.size() > 0)
+			{
+				auto size = std::min(sv.size(),max_size);
+				auto num = std::stoul(static_cast<std::string>(sv.substr(sv.size()-size,sv.size())),nullptr,l_base);
+				hs += uint256_t(num) * uint256_t::exp(base,exponent);
+				sv.remove_suffix(size);
+				exponent += size;
+			}
+	};
 	if(is_hex)
 	{
-		rhs = uint256_0;
-		sv = sv.substr(2);
-		std::vector<uint64_t> result;
-		uint256_t base = 16;
-		uint256_t exponent = uint256_0;
-		while(sv.size())
-		{
-			size_t idx;
-			auto size = std::max(sv.size(),16UL);
-			auto num = std::stoul(sv.substr(0,size),&idx,16);
-//			rhs += uint256_t(num) * exp(base,exponent);
-		}
-		if(result.size() < 4)
-		{
-			result.resize(4);
-		}
-		rhs = {result[3],result[2],result[1],result[0]};
+		// remove hex 0x
+		sv.remove_prefix(2);
+		// extract in batches with max 16^n hex number for 64-bit (2^64 == 16^16)
+		gen_in(rhs,sv,16,16);
+	}
+	else if (is_oct)
+	{
+		// remove oct 0
+		sv.remove_prefix(1);
+		// extract in batches with max 8^n dec number for 64-bit (2^63 == 8^21)
+		gen_in(rhs,sv,8,21);
+	}
+	else if(is_dec)
+	{
+		// extract in batches with max 10^n dec number for 64-bit (10^19)
+		gen_in(rhs,sv,10,19);
+	}
+	else
+	{
+		stream.setstate(std::ios::failbit);
 	}
 	return stream;
 }
