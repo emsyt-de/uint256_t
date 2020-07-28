@@ -526,26 +526,24 @@
 		}
 
 		/// Get order of msb bit.
-		/// Return 0 if value == 0, otherwise [1 ... 256].
-		/// Get order of msb bit.
-		/// Return 0 if value == 0, otherwise [1 ... 256].
+		/// Return [0 ... 255].
 		constexpr uint16_t bits() const{
 			uint16_t out = 0;
 			if(upper > std::numeric_limits<uint64_t>::max())
 			{
-				out = 256 - static_cast<uint16_t>(__builtin_clzll(upper >> 64)); // upper has to be > 0
+				out = 255 - static_cast<uint16_t>(__builtin_clzll(upper >> 64)); // upper has to be > 0
 			}
 			else if (upper > 0)
 			{
-				out = 192 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(upper))); // upper has to be > 0
+				out = 191 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(upper))); // upper has to be > 0
 			}
 			else if(lower > std::numeric_limits<uint64_t>::max())
 			{
-				out = 128 - static_cast<uint16_t>(__builtin_clzll(lower >> 64)); // lower has to be > 0
+				out = 127 - static_cast<uint16_t>(__builtin_clzll(lower >> 64)); // lower has to be > 0
 			}
 			else if(lower > 0)
 			{
-				out = 64 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(lower))); // lower has to be > 0
+				out = 63 - static_cast<uint16_t>(__builtin_clzll(static_cast<uint64_t>(lower))); // lower has to be > 0
 			}
 			return out;
 		}
@@ -568,20 +566,20 @@
 			uint256_t uint256_0 = 0;
 			uint256_t uint256_1 = 1;
 			auto lhs_msb_bit_number = lhs.bits();
-			auto lhs_msb_exponential = uint256_1<<(lhs_msb_bit_number-1);
+			auto lhs_msb_exponential = uint256_1<<lhs_msb_bit_number;
 			auto rhs_msb_bit_number = rhs.bits();
-			auto rhs_msb_exponential = uint256_1<<(rhs_msb_bit_number-1);
+			auto rhs_msb_exponential = uint256_1<<rhs_msb_bit_number;
 			if(lhs == uint256_0 || rhs == uint256_0)
 			{
 				return uint256_0;
 			}
 			else if(lhs == lhs_msb_exponential) // Save calculations for 2^n numbers
 			{
-				return rhs << (lhs_msb_bit_number-1);
+				return rhs << lhs_msb_bit_number;
 			}
 			else if(rhs == rhs_msb_exponential)
 			{
-				return lhs << (rhs_msb_bit_number-1);
+				return lhs << rhs_msb_bit_number;
 			}
 
 			// split values into 4 64-bit parts
@@ -626,7 +624,7 @@
 			uint256_t uint256_0 = 0;
 			uint256_t uint256_1 = 1;
 			auto rhs_msb_bit_number = rhs.bits();
-			auto rhs_msb_exponential = uint256_1<<(rhs_msb_bit_number-1);
+			auto rhs_msb_exponential = uint256_1<<rhs_msb_bit_number;
 			/// Save some calculations
 			if (rhs == uint256_0)
 			{
@@ -646,7 +644,7 @@
 			}
 			else if(rhs == rhs_msb_exponential) // check if only one bit is set (2^n)
 			{
-				return std::pair(lhs >> (rhs_msb_bit_number-1), lhs & (rhs_msb_exponential-1));
+				return std::pair(lhs >> rhs_msb_bit_number, lhs & (rhs_msb_exponential-1));
 			}
 
 			std::pair <uint256_t, uint256_t> qr(uint256_0, lhs);
