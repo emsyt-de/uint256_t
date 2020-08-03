@@ -42,10 +42,15 @@
 	class uint256_t;
 
 	// Give uint256_t type traits
-	namespace std {  // This is probably not a good idea
-	template <> struct is_arithmetic <uint256_t> : std::true_type {};
-	template <> struct is_integral   <uint256_t> : std::true_type {};
-	template <> struct is_unsigned   <uint256_t> : std::true_type {};
+	namespace std {
+	template <>
+	struct is_arithmetic <uint256_t> : std::true_type {};
+	template <>
+	struct is_integral   <uint256_t> : std::true_type {};
+	template <>
+	struct is_unsigned   <uint256_t> : std::true_type {};
+	template <>
+	struct is_literal_type   <uint256_t> : std::true_type {};
 	}
 
 	class uint256_t {
