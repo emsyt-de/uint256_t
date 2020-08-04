@@ -97,54 +97,10 @@
 			return static_cast<bool>(lower) || static_cast<bool>(upper);
 		}
 
-		constexpr operator uint8_t() const
+		template<std::integral T>
+		constexpr operator T() const
 		{
-			return static_cast<uint8_t>(lower);
-		}
-
-		constexpr operator int8_t() const
-		{
-			return static_cast<int8_t>(lower);
-		}
-
-		constexpr operator uint16_t() const
-		{
-			return static_cast<uint16_t>(lower);
-		}
-
-		constexpr operator int16_t() const
-		{
-			return static_cast<int16_t>(lower);
-		}
-
-		constexpr operator uint32_t() const
-		{
-			return static_cast<uint32_t>(lower);
-		}
-
-		constexpr operator int32_t() const
-		{
-			return static_cast<int32_t>(lower);
-		}
-
-		constexpr operator uint64_t() const
-		{
-			return static_cast<uint64_t>(lower);
-		}
-
-		constexpr operator int64_t() const
-		{
-			return static_cast<int64_t>(lower);
-		}
-
-		constexpr operator uint128_t() const
-		{
-			return lower;
-		}
-
-		constexpr operator int128_t() const
-		{
-			return static_cast<int128_t>(lower);
+			return static_cast<T>(lower);
 		}
 
 		/// Bitwise Operators
