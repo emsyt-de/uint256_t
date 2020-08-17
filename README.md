@@ -6,19 +6,13 @@ Copyright (c) 2013 - 2018 Jason Lee @ calccrypto at gmail.com
 
 Please see LICENSE file for license.
 
-[![Build Status](https://travis-ci.org/calccrypto/uint256_t.svg?branch=master)](https://travis-ci.org/calccrypto/uint256_t)
-
 ## Acknowledgements
-With much help from Auston Sterling
+Forked from https://github.com/calccrypto/uint256_t
 
-Thanks to Stefan Deigmüller for finding
-a bug in operator*.
-
-Thanks to François Dessenne for convincing me
-to do a general rewrite of this class.
-
-Thanks to John Skaller for making symbols visible
-when compiling as a shared library.
+### Main changes are
+- Use cmake build system.
+- Replace `uint128_t` implementation with build in `__uint128_t` type. This increase performance alot.
+- Use C++20 language freatures.
 
 ## Usage
 This is simple implementation of an unsigned 256 bit
@@ -26,9 +20,6 @@ integer type in C++. It's meant to be used like a standard
 `uintX_t`, except with a larger bit size than those provided
 by C/C++.
 
-`uint256_t` requires [`uint128_t`](https://github.com/calccrypto/uint128_t), which is included.
-
-### In Code
 All that needs to be done in code is `#include "uint256_t.h"`
 
 ```c++
@@ -44,6 +35,6 @@ int main() {
 ```
 
 ### Compilation
-A C++ compiler supporting at least C++11 is required.
+A C++ compiler supporting at least C++20 is required. And cmake version 3.17.
 
-Compilation can be done by directly including `uint128_t.cpp` and `uint256_t.cpp` in your compile command, e.g. `g++ -std=c++11 main.cpp uint128_t.cpp uint256_t.cpp`, or other ways, such as linking the `uint128_t.o` and `uint256_t.o` files, or creating a library, and linking the library in.
+
